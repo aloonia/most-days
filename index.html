@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Most Days</title>
+<meta name="description" content="Be your own coach. Training that bends around your life.">
+<meta name="theme-color" content="#111111">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Most Days">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Instrument+Sans:ital,wght@0,500;0,600;1,500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<!-- Icons: Phosphor Icons (MIT licence), https://phosphoricons.com -->
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<style>
+:root {
+  --ink: #111111; --paper: #F5F4F0; --white: #FFFFFF; --muted: #62615C; --line: #E3E1DA; --soft: #EDEBE5;
+  --green: #6DB33F; --leaf-dark: #2F6B22; --leaf-soft: #EAF4E2; --serif: Newsreader, Georgia, serif; --run: #D1495B; --str: #4B3FA8; --swim: #0E8F9C; --cal: #2F4E7C;
+  --top: env(safe-area-inset-top, 0px); --bottom: env(safe-area-inset-bottom, 0px);
+  color-scheme: light;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; background: var(--ink); }
+body { font-family: Figtree, system-ui, -apple-system, sans-serif; color: var(--ink); font-size: 16px; line-height: 1.45; font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased; }
+button, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; padding: 0; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
+.ph { line-height: 1; }
+
+#stage { min-height: 100%; display: flex; align-items: center; justify-content: center; gap: 56px; }
+#app { position: relative; width: 100%; height: 100dvh; overflow: hidden; background: var(--paper); }
+.aside { display: none; color: #fff; max-width: 340px; }
+@media (min-width: 760px) {
+  #stage { padding: 32px; }
+  #app { width: 390px; height: 844px; border-radius: 44px; box-shadow: 0 0 0 10px #222, 0 30px 80px rgba(0,0,0,0.5); --top: 20px; --bottom: 12px; }
+  .aside { display: block; }
+}
+.shot #stage { display: block; padding: 0; }
+.shot #app { margin: 0 auto; width: 390px; height: 844px; border-radius: 0; box-shadow: none; --top: 0px; --bottom: 0px; }
+.shot .aside { display: none; }
+.aside h1 { font-family: 'Instrument Sans', sans-serif; font-size: 44px; line-height: 1; letter-spacing: -1.6px; margin: 0 0 16px; }
+.aside p { color: #BDBCB6; margin: 0 0 12px; }
+
+.screen { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.fade { animation: fade .45s ease both; } .up { animation: up .3s ease both; }
+.rise { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes fade { from { opacity: 0 } to { opacity: 1 } }
+@keyframes up { from { transform: translateY(24px); opacity: 0 } to { transform: none; opacity: 1 } }
+@keyframes rise { from { transform: translateY(14px); opacity: 0 } to { transform: none; opacity: 1 } }
+@keyframes spin { to { transform: rotate(360deg) } }
+@keyframes kb { from { transform: scale(1.08) } to { transform: scale(1) } }
+@keyframes most { from { transform: translateX(-28px); opacity: 0; filter: blur(6px) } to { transform: none; opacity: 1; filter: none } }
+@keyframes pop { 0% { transform: scale(0); } 70% { transform: scale(1.4); } 100% { transform: scale(1); } }
+@keyframes line { from { opacity: 0; transform: translateY(18px); filter: blur(4px) } to { opacity: 1; transform: none; filter: none } }
+
+.logo { font-family: 'Instrument Sans', sans-serif; line-height: 1; white-space: nowrap; }
+.logo i { font-style: italic; font-weight: 500; } .logo b { font-weight: 600; } .logo s { text-decoration: none; color: var(--green); font-weight: 700; display: inline-block; }
+.disp { font-family: var(--serif); font-weight: 500; line-height: 1.02; letter-spacing: -.6px; }
+.disp-i { font-family: var(--serif); font-style: italic; font-weight: 400; line-height: 1.04; letter-spacing: -.4px; color: var(--green); }
+.kicker { font-size: 12px; font-weight: 600; letter-spacing: 1.6px; text-transform: uppercase; }
+.muted { color: var(--muted); }
+.h1 { margin: 0; font-family: var(--serif); font-weight: 500; font-size: 32px; line-height: 1.1; letter-spacing: -.5px; }
+.serif { font-family: var(--serif); }
+.sec { font-family: var(--serif); font-size: 22px; font-weight: 500; margin: 8px 4px 0; letter-spacing: -.2px; }
+.stat { background: #fff; border-radius: 18px; padding: 12px 14px; flex: 1; }
+.stat b { display: block; font-family: var(--serif); font-weight: 500; font-size: 25px; line-height: 1.05; white-space: nowrap; }
+.stat span { font-size: 13px; color: var(--muted); }
+.lrow { display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 0; border-bottom: 1px solid var(--soft); text-align: left; min-height: 52px; }
+.lrow:last-child { border-bottom: 0; }
+.lrow .ph { font-size: 22px; flex: none; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-cell { aspect-ratio: 1 / 1.15; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 6px; gap: 4px; font-size: 14px; font-weight: 600; background: transparent; }
+.cal-cell.in { background: #fff; }
+.cal-cell.sel { outline: 2px solid var(--ink); }
+.cal-cell.today { background: var(--ink); color: #fff; }
+
+.photo { position: relative; overflow: hidden; background: #0B0B0B; flex: none; }
+.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.photo .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.42) 0%, rgba(0,0,0,.18) 35%, rgba(0,0,0,.92) 100%); }
+.photo .in { position: absolute; inset: 0; padding: calc(var(--top) + 18px) 20px 20px; display: flex; flex-direction: column; color: #fff; }
+
+.btn { height: 54px; border-radius: 27px; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; width: 100%; transition: background .2s, color .2s; }
+.btn-ink { background: var(--ink); color: #fff; }
+.btn-out { background: #fff; color: var(--ink); border: 1.5px solid var(--line); }
+.btn-green { background: var(--green); color: var(--ink); font-weight: 700; }
+.btn-ghost { color: #fff; border: 1.5px solid rgba(255,255,255,.7); }
+.btn[disabled] { background: #DAD7CF; color: #77756F; cursor: default; }
+.row { display: flex; gap: 8px; }
+.row > * { flex: 1; }
+.icon-btn { width: 44px; height: 44px; border-radius: 22px; background: #fff; display: flex; align-items: center; justify-content: center; flex: none; color: var(--ink); }
+.card { background: #fff; border-radius: 22px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 13px; font-size: 13px; font-weight: 700; color: #fff; }
+.tag { flex: none; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 8px; background: var(--soft); color: #3A3A36; }
+.tag.g { background: var(--green); color: var(--ink); } .tag.c { background: #E9EEF6; color: var(--cal); }
+.opt { display: flex; align-items: center; gap: 12px; text-align: left; padding: 14px 16px; border-radius: 18px; background: #fff; border: 2px solid transparent; width: 100%; min-height: 58px; transition: border-color .15s; }
+.opt.on { border-color: var(--ink); }
+.opt .ph { font-size: 24px; flex: none; }
+.tile { display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 16px; border-radius: 20px; background: #fff; border: 2px solid transparent; min-height: 108px; text-align: left; font-weight: 600; }
+.tile .ph { font-size: 32px; }
+.tile.on { border-color: var(--ink); }
+.dot { width: 12px; height: 12px; border-radius: 6px; flex: none; }
+.check { width: 22px; height: 22px; flex: none; border-radius: 11px; border: 2px solid #CDCAC2; }
+.check.sq { border-radius: 7px; }
+.on .check { border: 7px solid var(--ink); } .on .check.sq { border: 0; background: var(--ink); }
+.pill { min-height: 42px; padding: 0 14px; border-radius: 21px; background: #fff; font-size: 14px; font-weight: 600; white-space: nowrap; flex: none; display: inline-flex; align-items: center; gap: 6px; }
+.pill.on { background: var(--ink); color: #fff; }
+.bars { display: flex; align-items: flex-end; gap: 3px; }
+.bars span { display: block; border-radius: 4px; }
+.scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.scroll::-webkit-scrollbar { display: none; }
+.scroll > * { flex-shrink: 0; }
+.field { width: 100%; height: 56px; border-radius: 16px; border: 1.5px solid var(--line); background: #fff; padding: 0 16px; font-size: 20px; }
+.field:focus { outline: none; border-color: var(--ink); }
+.nav { position: absolute; left: 0; right: 0; bottom: 0; height: calc(64px + var(--bottom)); padding: 4px 24px var(--bottom); background: var(--paper); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(3, 1fr); }
+.nav button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 13px; color: #8F8E88; font-weight: 500; }
+.nav button .ph { font-size: 22px; }
+.nav button.on { color: var(--ink); font-weight: 700; }
+.sheet-bg { position: absolute; inset: 0; background: rgba(0,0,0,.5); animation: fade .2s ease; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; max-height: 88%; background: var(--paper); border-radius: 28px 28px 0 0; padding: 10px 18px calc(22px + var(--bottom)); display: flex; flex-direction: column; gap: 12px; animation: up .28s ease; }
+.grab { width: 40px; height: 5px; border-radius: 3px; background: #CDCAC2; align-self: center; flex: none; }
+.sheet h2 { margin: 0; font-family: var(--serif); font-weight: 500; font-size: 26px; letter-spacing: -.3px; line-height: 1.15; }
+.spinner { width: 22px; height: 22px; border-radius: 11px; border: 2.5px solid var(--line); border-top-color: var(--ink); animation: spin .8s linear infinite; flex: none; }
+.toast { position: absolute; left: 16px; right: 16px; bottom: calc(96px + var(--bottom)); background: var(--ink); color: #fff; border-radius: 18px; padding: 14px 16px; display: flex; align-items: center; gap: 10px; animation: up .25s ease; z-index: 5; }
+.toast button { color: var(--green); font-weight: 700; min-height: 36px; }
+.hint { position: relative; background: var(--ink); color: #fff; border-radius: 16px; padding: 14px 16px; display: flex; gap: 10px; align-items: flex-start; font-size: 15px; }
+.hint:after { content: ''; position: absolute; top: -7px; left: 28px; width: 14px; height: 14px; background: var(--ink); transform: rotate(45deg); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.strip { display: flex; gap: 6px; flex-wrap: wrap; min-height: 28px; }
+.strip span { display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 10px; border-radius: 14px; background: #fff; font-size: 13px; font-weight: 600; animation: pop .35s ease both; }
+.daydot { width: 40px; height: 52px; border-radius: 14px; background: #fff; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 13px; }
+.daydot.on { background: var(--ink); color: #fff; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="app"></div>
+  <div class="aside">
+    <h1><span class="logo"><i>Most</i> <b>Days</b><s>.</s></span></h1>
+    <p>Be your own coach. A training plan that bends around your life.</p>
+    <p>Open this page on your iPhone, tap Share, then Add to Home Screen.</p>
+  </div>
+</div>
+<script>
+'use strict';
+var PH = {
+  hero: 'photos/hero.jpg', tempo: 'photos/tempo.jpg', easy: 'photos/bridge.jpg', sprint: 'photos/sprint.jpg', rest: 'photos/sea.jpg',
+  legs: 'photos/legs.jpg', group: 'photos/group.jpg', night: 'photos/night.jpg', swim1: 'photos/swim1.jpg', swim2: 'photos/swim2.jpg',
+  swim3: 'photos/swim3.jpg', lift: 'photos/lift.jpg', laces: 'photos/laces.jpg', monsoon: 'photos/monsoon.jpg'
+};
+var params = new URLSearchParams(location.search);
+if (params.get('shot')) document.documentElement.className = 'shot';
+var SCEN = params.get('sync') || 'clean';
+
+/* ---------- sports ---------- */
+var SPORTS = {
+  run: { name: 'Running', short: 'Run', icon: 'ph-person-simple-run', col: '#D1495B' },
+  str: { name: 'Strength', short: 'Strength', icon: 'ph-barbell', col: '#4B3FA8' },
+  swim: { name: 'Swimming', short: 'Swim', icon: 'ph-person-simple-swim', col: '#0E8F9C' },
+  cycle: { name: 'Cycling', short: 'Ride', icon: 'ph-bicycle', col: '#C9822B' },
+  yoga: { name: 'Yoga', short: 'Yoga', icon: 'ph-person-simple-tai-chi', col: '#6A4C93' },
+  hike: { name: 'Walking or hiking', short: 'Walk', icon: 'ph-mountains', col: '#3F7D58' },
+  football: { name: 'Football', short: 'Football', icon: 'ph-soccer-ball', col: '#2F6FED' },
+  racquet: { name: 'Racquet sports', short: 'Play', icon: 'ph-tennis-ball', col: '#5E8A1E' }
+};
+var SPORT_KEYS = ['run', 'str', 'swim', 'cycle', 'yoga', 'hike', 'football', 'racquet'];
+function sp(k) { return SPORTS[k] || SPORTS.run; }
+function icon(name, size, color) { return '<i class="ph ' + name + '" aria-hidden="true" style="font-size:' + (size || 20) + 'px' + (color ? ';color:' + color : '') + '"></i>'; }
+
+/* ---------- workouts: blocks are [label, detail, intensity 1-5, minutes] ---------- */
+var W = {
+  tempo: { sport: 'run', a: '6 km', b: 'tempo', dist: '6 km', photo: PH.tempo, stat: '5.2 km in 31 min', music: true,
+    blocks: [['Warm-up', '1 km, easy', 1, 7], ['Tempo', '4 km at 5:10 /km, comfortably hard', 3, 21], ['Cool-down', '1 km, easy', 1, 7]] },
+  shortTempo: { sport: 'run', a: '4 km', b: 'short tempo', dist: '4 km', photo: PH.tempo, stat: '4.1 km in 24 min', music: true,
+    blocks: [['Warm-up', '1 km, easy', 1, 7], ['Tempo', '2 km at 5:10 /km', 3, 10], ['Cool-down', '1 km, easy', 1, 7]] },
+  progression: { sport: 'run', a: '5 km', b: 'progression', dist: '5 km', photo: PH.tempo, stat: '5.0 km in 30 min', music: true,
+    blocks: [['Easy', '2 km', 1, 13], ['Steady', '2 km', 2, 12], ['Tempo', 'Last 1 km only', 3, 5]] },
+  easy: { sport: 'run', a: '5 km', b: 'easy', dist: '5 km', photo: PH.easy, stat: '5.1 km in 32 min', music: true,
+    blocks: [['Easy', '5 km, chatty pace', 1, 33]] },
+  strides: { sport: 'run', a: '5 km easy', b: 'with strides', dist: '5 km', photo: PH.easy, stat: '5.2 km in 35 min', music: true,
+    blocks: [['Easy', '5 km', 1, 31], ['Strides', '6 × 20 s quick, walk back', 3, 4]] },
+  tiny: { sport: 'run', a: '15 min', b: 'around the block', dist: 'About 2 km', photo: PH.easy, stat: '2.4 km in 15 min', music: true,
+    blocks: [['Easy', 'Walk home if it still feels bad', 1, 15]] },
+  easyRun: { sport: 'run', a: '30 min', b: 'easy run', dist: 'About 5 km', photo: PH.sprint, stat: '4.8 km in 30 min', music: true,
+    blocks: [['Easy', 'A pace you could chat at', 1, 30]] },
+  runWalk: { sport: 'run', a: '20 min', b: 'run-walk', dist: 'About 2.5 km', photo: PH.easy, stat: '2.6 km in 20 min', music: true,
+    blocks: [['Walk', '5 min to warm up', 1, 5], ['Run 1, walk 1', '5 rounds', 2, 10], ['Walk', '5 min', 1, 5]] },
+  longRun: { sport: 'run', a: '50 min', b: 'long easy run', dist: 'About 8 km', photo: PH.group, stat: '8.1 km in 50 min', music: true,
+    blocks: [['Easy', 'Slow is the point', 1, 50]] },
+  strength: { sport: 'str', a: '40 min', b: 'full body', dist: 'No distance', photo: PH.lift, stat: '42 min',
+    blocks: [['Warm-up', 'Mobility', 1, 8], ['Main', 'Squat, push, pull, hinge, 3 rounds', 3, 26], ['Core', '2 rounds', 2, 6]] },
+  core: { sport: 'str', a: 'Core', b: 'and mobility', dist: 'No distance', photo: PH.lift, stat: '22 min',
+    blocks: [['Mobility', 'Hips and calves', 1, 10], ['Core', '3 rounds', 2, 12]] },
+  swim: { sport: 'swim', a: '1,000 m', b: 'swim', dist: '1,000 m', photo: PH.swim1, stat: '1,000 m in 36 min', lengths: true,
+    tip: 'Breathe every 3 strokes. Long and slow beats short and fast. Stop at the wall as often as you like.',
+    blocks: [['Warm-up', '200 m easy, any stroke', 1, 8], ['Kick drills', '4 × 50 m with a board', 2, 8], ['Main set', '6 × 50 m freestyle, 30 s rest', 3, 14], ['Cool-down', '100 m easy', 1, 5]] },
+  swimLesson: { sport: 'swim', a: '30 min', b: 'easy swim', dist: 'About 600 m', photo: PH.swim3, stat: '600 m in 30 min', lengths: true,
+    tip: 'Stop at the wall whenever you like. Today is about feeling at home in the water.',
+    blocks: [['Easy', 'Any stroke', 1, 10], ['Kick drills', 'With a board', 2, 10], ['Easy', 'Any stroke', 1, 10]] },
+  swimShort: { sport: 'swim', a: '600 m', b: 'shorter swim', dist: '600 m', photo: PH.swim1, stat: '600 m in 22 min', lengths: true,
+    blocks: [['Warm-up', '100 m easy', 1, 4], ['Kick drills', '4 × 50 m', 2, 8], ['Easy', '300 m', 1, 10]] },
+  drills: { sport: 'swim', a: '500 m', b: 'drills only', dist: '500 m', photo: PH.swim3, stat: '500 m in 20 min', lengths: true,
+    blocks: [['Kick', '4 × 50 m', 2, 8], ['Catch-up drill', '4 × 50 m', 2, 8], ['Easy', '100 m', 1, 4]] },
+  ride: { sport: 'cycle', a: '45 min', b: 'easy ride', dist: 'About 15 km', photo: PH.monsoon, stat: '15 km in 46 min',
+    blocks: [['Easy', 'Spin, don’t push', 1, 45]] },
+  yoga: { sport: 'yoga', a: '30 min', b: 'yoga', dist: 'No distance', photo: PH.rest, stat: '30 min',
+    blocks: [['Flow', 'Hips, hamstrings, back', 1, 30]] },
+  hike: { sport: 'hike', a: '40 min', b: 'brisk walk', dist: 'About 4 km', photo: PH.monsoon, stat: '4.2 km in 41 min',
+    blocks: [['Brisk', 'Arms swinging', 1, 40]] },
+  football: { sport: 'football', a: '60 min', b: 'football', dist: 'No distance', photo: PH.group, stat: '60 min',
+    blocks: [['Play', 'Have fun', 2, 60]] },
+  racquet: { sport: 'racquet', a: '60 min', b: 'game', dist: 'No distance', photo: PH.group, stat: '60 min',
+    blocks: [['Play', 'Have fun', 2, 60]] }
+};
+var EASY_OF = { run: 'easyRun', str: 'core', swim: 'swimLesson', cycle: 'ride', yoga: 'yoga', hike: 'hike', football: 'hike', racquet: 'yoga' };
+var EFF = ['', 'Easy', 'Steady', 'Hard', 'Very hard', 'All out'];
+function mins(k) { return W[k].blocks.reduce(function (a, b) { return a + b[3]; }, 0); }
+function peak(k) { return W[k].blocks.reduce(function (a, b) { return Math.max(a, b[2]); }, 0); }
+function op(i) { return i <= 1 ? 0.35 : i === 2 ? 0.6 : 1; }
+function wname(k) { return W[k].a + ' ' + W[k].b; }
+function bars(k, h) {
+  var c = sp(W[k].sport).col;
+  return '<div class="bars" aria-hidden="true" style="height:' + h + 'px">' + W[k].blocks.map(function (b) {
+    return '<span style="flex:' + b[3] + ';height:' + (24 + b[2] * 19) + '%;background:' + c + ';opacity:' + op(b[2]) + '"></span>';
+  }).join('') + '</div>';
+}
+
+/* ---------- state ---------- */
+var DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+var TODAY_IDX = 2; // Wed 14 Oct 2026
+function fresh() {
+  return {
+    scr: 'splash', introStep: 0, step: 0,
+    name: '', age: null, work: {}, motive: null, primary: null, others: {}, level: null,
+    hasRace: null, raceName: '', raceDate: '', days: {}, slot: {}, life: {}, body: null, where: {}, why: '', conn: {},
+    buildStep: 0, phase: 'day1', hintSeen: false, firstDone: false,
+    sessions: null, active: 0, from: 'today', prev: null, done: {}, feel: {},
+    sheet: null, reason: null, opt: null, cant: null, moveDay: null, offVal: null, journal: '', toast: '', shareStyle: 0, planTab: 0,
+    calOn: { wedding: 1, amma: 1, trip: 1, diwali: 1 }, nudge: {}, journalLog: [], inspo: [], calMonth: 0, calSel: null, editFrom: null, noteKind: 'note', noteDraft: ''
+  };
+}
+var S, P;
+function loadProfile(id) { try { return Object.assign(fresh(), JSON.parse(localStorage.getItem('mostdays.p.' + id)) || {}); } catch (e) { return fresh(); } }
+try { P = JSON.parse(localStorage.getItem('mostdays.profiles')); } catch (e) { P = null; }
+if (!P || !P.list || !P.list.length) P = { list: [{ id: 'p1', name: '' }], cur: 'p1' };
+S = loadProfile(P.cur);
+if (params.get('reset')) { S = fresh(); P = { list: [{ id: 'p1', name: '' }], cur: 'p1' }; }
+function addProfile() { save(); var id = 'p' + Date.now(); P.list.push({ id: id, name: '' }); P.cur = id; S = fresh(); S.scr = 'onb'; S.step = 0; render(); }
+function switchProfile(id) { save(); P.cur = id; S = loadProfile(id); S.sheet = null; S.scr = S.sessions ? 'today' : 'onb'; render(); }
+if (['splash', 'intro', 'build'].indexOf(S.scr) > -1 || S.sheet) { S.sheet = null; if (S.scr !== 'splash' && S.scr !== 'intro') S.scr = S.sessions ? 'today' : 'splash'; }
+if (S.scr === 'splash' || S.scr === 'intro') S.introStep = 0;
+function save() {
+  try {
+    localStorage.setItem('mostdays.p.' + P.cur, JSON.stringify(Object.assign({}, S, { toast: '' })));
+    P.list.forEach(function (p) { if (p.id === P.cur) p.name = (S.name || '').trim(); });
+    localStorage.setItem('mostdays.profiles', JSON.stringify(P));
+  } catch (e) {}
+}
+
+var H = [], tSync, tToast, tIntro, tBuild;
+function h(fn) { H.push(fn); return 'data-h="' + (H.length - 1) + '"'; }
+function set(o) { Object.assign(S, o); render(); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function logo(px, color) { return '<span class="logo" style="font-size:' + px + 'px;letter-spacing:' + (-px * 0.035) + 'px;color:' + (color || 'inherit') + '"><i>Most</i> <b>Days</b><s>.</s></span>'; }
+function toggle(obj, k) { var o = Object.assign({}, obj); if (o[k]) delete o[k]; else o[k] = 1; return o; }
+function keys(o) { return Object.keys(o || {}).filter(function (k) { return o[k]; }); }
+function first() { return (S.name || '').trim().split(' ')[0] || 'there'; }
+function toastMsg(m) { clearTimeout(tToast); S.toast = m; render(); tToast = setTimeout(function () { set({ toast: '' }); }, 5000); }
+var BACK = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
+var CHEV = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8F8E88" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+var CLOSE = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+
+/* ---------- plan generation from onboarding answers ---------- */
+function buildWeek() {
+  var prim = S.primary || 'run';
+  var lvl = S.level || 1;
+  var others = keys(S.others).filter(function (k) { return k !== prim; });
+  var dayIdx = keys(S.days).map(Number).sort(function (a, b) { return a - b; });
+  if (!dayIdx.length) dayIdx = [0, 2, 4, 6];
+  // the week starts today: rotate so that today (or the next chosen day) comes first
+  var list = [];
+  var primEasy = prim === 'run' ? (lvl === 0 ? 'runWalk' : 'easyRun') : prim === 'swim' ? (lvl === 0 ? 'swimLesson' : 'swim') : EASY_OF[prim];
+  var primLong = prim === 'run' ? (lvl === 0 ? 'easyRun' : 'longRun') : prim === 'swim' ? 'swim' : EASY_OF[prim];
+  dayIdx.forEach(function (d, i) {
+    var key;
+    if (i === dayIdx.length - 1 && dayIdx.length > 2) key = primLong;
+    else if (i % 2 === 1 && others.length) key = others[(i - 1) / 2 % others.length] === 'str' ? 'strength' : (others[(i - 1) / 2 % others.length] === 'swim' ? 'swimLesson' : EASY_OF[others[(i - 1) / 2 % others.length]]);
+    else key = primEasy;
+    list.push({ day: d, key: key, base: key });
+  });
+  // make sure today has a session for day one
+  if (!list.some(function (x) { return x.day === TODAY_IDX; })) {
+    var nextI = list.findIndex(function (x) { return x.day > TODAY_IDX; });
+    var tgt = nextI > -1 ? list[nextI] : list[0];
+    tgt.day = TODAY_IDX;
+    list.sort(function (a, b) { return a.day - b.day; });
+  }
+  // the full pattern repeats in later weeks; week one only holds today onwards
+  S.template = {};
+  list.forEach(function (x) { S.template[x.day] = x.base; });
+  dayIdx.forEach(function (d) { if (!S.template[d]) S.template[d] = primEasy; });
+  return list.filter(function (x) { return x.day >= TODAY_IDX; });
+}
+function weekSevenSessions() {
+  var prim = S.primary || 'run';
+  var todayKey = prim === 'run' ? 'tempo' : prim === 'swim' ? 'swim' : EASY_OF[prim];
+  return [
+    { day: 0, key: S.others.str || prim === 'str' ? 'strength' : 'core', base: 'strength', done: true },
+    { day: 1, key: prim === 'run' ? 'easy' : EASY_OF[prim], base: 'easy', done: true },
+    { day: 2, key: todayKey, base: todayKey },
+    { day: 4, key: S.others.swim || prim === 'swim' ? 'swim' : EASY_OF[prim], base: S.others.swim || prim === 'swim' ? 'swim' : EASY_OF[prim] },
+    { day: 6, key: prim === 'run' ? 'longRun' : EASY_OF[prim], base: prim === 'run' ? 'longRun' : EASY_OF[prim] }
+  ];
+}
+function todayIndex() { return (S.sessions || []).findIndex(function (x) { return x.day === TODAY_IDX; }); }
+function sess(i) { return S.sessions[i]; }
+
+/* ---------- splash & intro ---------- */
+function splash() {
+  return '<button class="screen" ' + h(function () { set({ scr: 'intro', introStep: 0 }); }) + ' aria-label="Continue" style="background:#111;align-items:center;justify-content:center;color:#fff">' +
+    '<span class="logo" style="font-size:46px;letter-spacing:-1.6px"><i style="display:inline-block;animation:most .9s cubic-bezier(.2,.7,.2,1) both">Most</i> <b style="display:inline-block;animation:rise .8s .35s ease both">Days</b><s style="animation:pop .5s .9s ease both">.</s></span></button>';
+}
+var INTRO = [
+  ['Most training plans', 'assume nothing changes', 'for 24 weeks.'],
+  ['Then a meeting moves.', 'Someone at home needs you.', 'You sleep badly.'],
+  ['Most Days gives you', 'a real plan, and the power', 'to change it.'],
+  ['Be your own', 'coach.', '']
+];
+function intro() {
+  var i = S.introStep, L = INTRO[i], last = i === INTRO.length - 1;
+  var lines = L.filter(Boolean).map(function (t, j) {
+    var isLast = last && j === 1;
+    return '<div class="' + (isLast ? 'disp-i' : 'disp') + '" style="font-size:' + (isLast ? 54 : 34) + 'px;animation:line .8s ' + (j * 0.45) + 's cubic-bezier(.2,.7,.2,1) both">' + t + '</div>';
+  }).join('');
+  var dots = INTRO.map(function (_, j) { return '<span style="width:' + (j === i ? 20 : 6) + 'px;height:6px;border-radius:3px;background:' + (j === i ? '#fff' : 'rgba(255,255,255,.4)') + ';transition:width .3s"></span>'; }).join('');
+  return '<div class="screen" style="background:#0B0B0B"><div class="photo" style="position:absolute;inset:0"><img src="' + PH.hero + '" alt="" style="animation:kb 12s ease-out both"><div class="scrim" style="background:linear-gradient(180deg,rgba(0,0,0,.45) 0%,rgba(0,0,0,.35) 40%,rgba(0,0,0,.94) 80%)"></div>' +
+    '<button aria-label="Next" style="position:absolute;inset:0" ' + h(nextIntro) + '></button>' +
+    '<div class="in" style="padding-bottom:calc(30px + var(--bottom));pointer-events:none">' + logo(22, '#fff') +
+    '<div style="margin-top:auto;display:flex;flex-direction:column;gap:2px" aria-live="polite">' + lines + '</div>' +
+    '<div style="display:flex;gap:6px;margin-top:22px">' + dots + '</div>' +
+    (last ? '<div style="pointer-events:auto;margin-top:22px;animation:rise .7s 1s both"><button class="btn btn-green" ' + h(function () { clearTimeout(tIntro); set({ scr: 'onb', step: 0 }); }) + '>Set me up</button>' +
+      '<button class="btn" style="color:#fff;height:46px;margin-top:4px;font-weight:500" ' + h(function () { clearTimeout(tIntro); if (S.sessions) set({ scr: 'today' }); else demoAccount(); }) + '>' + (S.sessions ? 'Log in as ' + esc(first()) : 'I have an account') + '</button></div>'
+      : '<div style="margin-top:22px;height:100px;display:flex;align-items:flex-end;color:rgba(255,255,255,.6);font-size:14px">Tap to continue</div>') +
+    '</div></div></div>';
+}
+function nextIntro() { clearTimeout(tIntro); if (S.introStep < INTRO.length - 1) set({ introStep: S.introStep + 1 }); }
+function scheduleIntro() { clearTimeout(tIntro); if (S.scr === 'intro' && S.introStep < INTRO.length - 1) tIntro = setTimeout(nextIntro, 3600); }
+function demoAccount() {
+  Object.assign(S, { name: 'Anmol', age: '30to39', work: { desk: 1, care: 1 }, motive: 'head', primary: 'run', others: { str: 1, swim: 1 }, level: 3, hasRace: 'yes', raceName: 'Comrades Marathon', raceDate: '2027-06-13',
+    days: { 0: 1, 1: 1, 2: 1, 4: 1, 6: 1 }, slot: { am: 1 }, life: { parent: 1, hours: 1 }, body: 'niggle', where: { calf: 1 }, why: 'Finish Comrades in June. Stay sane getting there.', conn: { cal: 1, strava: 1 } });
+  S.phase = 'day7'; S.sessions = weekSevenSessions(); S.hintSeen = true; S.firstDone = true; S.done = { 0: true, 1: true };
+  S.nudge = {}; S.prev = null; S.feel = {}; S.calOn = { wedding: 1, amma: 1, trip: 1, diwali: 1 };
+  set({ scr: 'today' });
+}
+
+/* ---------- onboarding ---------- */
+var CH = ['You', 'Training', 'Life', 'Connect'];
+var STEPS = [
+  { ch: 0, id: 'name' }, { ch: 0, id: 'age' }, { ch: 0, id: 'work' }, { ch: 0, id: 'motive' },
+  { ch: 1, id: 'primary' }, { ch: 1, id: 'others' }, { ch: 1, id: 'level' }, { ch: 1, id: 'race' },
+  { ch: 2, id: 'days' }, { ch: 2, id: 'life' }, { ch: 2, id: 'body' }, { ch: 2, id: 'why' },
+  { ch: 3, id: 'connect' }
+];
+var AGES = [['u25', 'Under 25'], ['25to29', '25 to 29'], ['30to39', '30 to 39'], ['40to49', '40 to 49'], ['50p', '50 or over']];
+var WORK = [['desk', 'A desk job', 'ph-desktop'], ['feet', 'On my feet all day', 'ph-sneaker-move'], ['shifts', 'Shifts or odd hours', 'ph-moon-stars'], ['study', 'Studying', 'ph-student'], ['own', 'Running my own thing', 'ph-storefront'], ['care', 'Caring for someone', 'ph-hand-heart']];
+var MOTIVE = [['head', 'Keeping my head clear', 'ph-brain'], ['health', 'Feeling strong and healthy', 'ph-heartbeat'], ['goal', 'Chasing a race or a goal', 'ph-flag-checkered'], ['look', 'Looking and feeling good', 'ph-sparkle'], ['dream', 'Something I always wanted to do', 'ph-star'], ['win', 'Competing, and winning', 'ph-trophy']];
+var LEVELS = [['Just starting', 'Less than a few months'], ['Doing it regularly', 'Most weeks, no events'], ['Training for events', 'Races, rides, swims'], ['Experienced competitor', 'Years of it, maybe ultras']];
+var LIFE = [['parent', 'Looking after a parent', 'ph-hand-heart'], ['kids', 'Young kids at home', 'ph-baby'], ['hours', 'Long or unpredictable hours', 'ph-briefcase'], ['travel', 'I travel for work', 'ph-airplane-tilt'], ['cycle', 'My cycle affects my training', 'ph-drop'], ['none', 'Not much, honestly', 'ph-smiley']];
+var BODY = [['good', 'All good', 'ph-check-circle'], ['niggle', 'A niggle I’m watching', 'ph-bandaids'], ['injury', 'Coming back from an injury', 'ph-first-aid'], ['break', 'Coming back after a break', 'ph-hourglass']];
+var SLOTS = [['am', 'Early morning', 'ph-sun-horizon'], ['lunch', 'Lunch', 'ph-sun'], ['pm', 'Evening', 'ph-moon'], ['vary', 'It changes', 'ph-shuffle']];
+var RACES = ['Comrades Marathon', 'Mumbai Marathon', 'TCS World 10K Bengaluru', 'Chicago Marathon', 'Ironman 70.3 Goa'];
+function valid(id) {
+  switch (id) {
+    case 'name': return !!S.name.trim();
+    case 'age': return !!S.age;
+    case 'work': return keys(S.work).length > 0;
+    case 'motive': return !!S.motive;
+    case 'primary': return !!S.primary;
+    case 'others': return true;
+    case 'level': return S.level != null;
+    case 'race': return S.hasRace === 'no' || (S.hasRace === 'yes' && !!S.raceName.trim() && !!S.raceDate);
+    case 'days': return keys(S.days).length > 0;
+    case 'life': return keys(S.life).length > 0;
+    case 'body': return !!S.body;
+    case 'why': return true;
+    case 'connect': return true;
+  }
+  return true;
+}
+function stepCopy(id) {
+  var n = first(), pn = S.primary ? sp(S.primary).name.toLowerCase() : 'training';
+  return {
+    name: ['First things first. What should I call you?', 'Your first name, or what your friends use.'],
+    age: ['Nice to meet you, ' + n + '. How old are you?', 'It helps me set sensible recovery.'],
+    work: ['What fills most of your week?', 'Pick any that fit.'],
+    motive: ['What gets you moving, really?', 'Pick the one that matters most. There’s no wrong answer.'],
+    primary: ['What’s your main thing?', 'The sport you’d keep if you could only keep one.'],
+    others: ['Anything else you do, or want to try?', 'Optional. A good week often mixes things up.'],
+    level: ['How would you describe your ' + pn + '?', 'Honest beats impressive. It sets your starting point.'],
+    race: ['Is there a big day on the calendar?', 'I’ll build backwards from the date.'],
+    days: ['Which days can you usually train?', 'Your normal week, not your best one.'],
+    life: ['What else is on your plate?', 'I’ll keep hard days away from your busiest ones.'],
+    body: ['How’s your body right now?', 'So I know what to go easy on.'],
+    why: ['Why now? Say it your way.', 'Optional. I’ll show it to you on the mornings you need it.'],
+    connect: ['Let your calendar and watch do the boring bits', 'I read busy times and event names. I never post or change anything. You can do this later.']
+  }[id];
+}
+function opts(arr, key, multi) {
+  return arr.map(function (o) {
+    var on = multi ? !!S[key][o[0]] : S[key] === o[0];
+    return '<button class="opt' + (on ? ' on' : '') + '" aria-pressed="' + on + '" ' + h(function () {
+      var x = {}; x[key] = multi ? toggle(S[key], o[0]) : o[0];
+      if (multi && key === 'life' && o[0] === 'none') x.life = { none: 1 };
+      if (multi && key === 'life' && o[0] !== 'none' && x.life.none) delete x.life.none;
+      set(x);
+    }) + '>' + (o[2] ? icon(o[2], 24) : '') + '<span style="flex:1;font-weight:500">' + o[1] + '</span><span class="check' + (multi ? ' sq' : '') + '"></span></button>';
+  }).join('');
+}
+function profileStrip() {
+  var bits = [];
+  if (S.name.trim() && S.step > 0) bits.push(esc(first()));
+  if (S.age && S.step > 1) bits.push(AGES.filter(function (a) { return a[0] === S.age; })[0][1]);
+  var MSHORT = { head: 'Clear head', health: 'Strong and healthy', goal: 'Chasing a goal', look: 'Feeling good', dream: 'A lifelong want', win: 'Competing' };
+  if (S.motive && S.step > 3) bits.push(icon(MOTIVE.filter(function (a) { return a[0] === S.motive; })[0][2], 14) + MSHORT[S.motive]);
+  if (S.primary && S.step > 4) bits.push(icon(sp(S.primary).icon, 14, sp(S.primary).col) + sp(S.primary).name);
+  keys(S.others).forEach(function (k) { if (S.step > 5 && k !== S.primary) bits.push(icon(sp(k).icon, 14, sp(k).col) + sp(k).short); });
+  if (S.hasRace === 'yes' && S.raceName && S.step > 7) bits.push(icon('ph-flag-checkered', 14) + esc(S.raceName));
+  if (keys(S.days).length && S.step > 8) bits.push(keys(S.days).length + ' days a week');
+  return bits.map(function (b) { return '<span>' + b + '</span>'; }).join('');
+}
+function onb() {
+  var st = STEPS[S.step], id = st.id, copy = stepCopy(id), body = '';
+  if (id === 'name') body = '<label for="f-name" class="sr">First name</label><input id="f-name" class="field" data-in="name" autocomplete="given-name" autocapitalize="words" placeholder="Your name" value="' + esc(S.name) + '">';
+  if (id === 'age') body = '<div style="display:flex;flex-wrap:wrap;gap:8px">' + AGES.map(function (a) {
+    var on = S.age === a[0];
+    return '<button class="pill' + (on ? ' on' : '') + '" style="min-height:52px;padding:0 18px;font-size:16px" aria-pressed="' + on + '" ' + h(function () { set({ age: a[0] }); }) + '>' + a[1] + '</button>';
+  }).join('') + '</div>';
+  if (id === 'work') body = opts(WORK, 'work', true);
+  if (id === 'motive') body = opts(MOTIVE, 'motive', false);
+  if (id === 'primary' || id === 'others') body = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">' + SPORT_KEYS.filter(function (k) { return id === 'primary' || k !== S.primary; }).map(function (k) {
+    var on = id === 'primary' ? S.primary === k : !!S.others[k];
+    return '<button class="tile' + (on ? ' on' : '') + '" aria-pressed="' + on + '" ' + h(function () { if (id === 'primary') set({ primary: k, others: (function () { var o = Object.assign({}, S.others); delete o[k]; return o; })() }); else set({ others: toggle(S.others, k) }); }) + '>' +
+      icon(sp(k).icon, 32, sp(k).col) + '<span>' + sp(k).name + '</span></button>';
+  }).join('') + '</div>';
+  if (id === 'level') body = LEVELS.map(function (l, i) {
+    var on = S.level === i;
+    return '<button class="opt' + (on ? ' on' : '') + '" aria-pressed="' + on + '" ' + h(function () { set({ level: i }); }) + '><span style="display:flex;gap:3px;align-items:flex-end;height:22px;flex:none">' +
+      [0, 1, 2, 3].map(function (j) { return '<span style="width:5px;border-radius:2px;height:' + (7 + j * 5) + 'px;background:' + (j <= i ? 'var(--ink)' : '#DAD7CF') + '"></span>'; }).join('') +
+      '</span><span style="flex:1"><span style="display:block;font-weight:600">' + l[0] + '</span><span class="muted" style="display:block;font-size:14px">' + l[1] + '</span></span><span class="check"></span></button>';
+  }).join('');
+  if (id === 'race') {
+    body = '<div class="row">' + [['yes', 'Yes, a race'], ['no', 'Not right now']].map(function (o) {
+      var on = S.hasRace === o[0];
+      return '<button class="pill' + (on ? ' on' : '') + '" style="min-height:52px;justify-content:center;font-size:16px" aria-pressed="' + on + '" ' + h(function () { set({ hasRace: o[0] }); }) + '>' + o[1] + '</button>';
+    }).join('') + '</div>';
+    if (S.hasRace === 'yes') body += '<label class="muted" style="font-size:13px;margin-top:6px">Race<input class="field" data-in="raceName" placeholder="Start typing" value="' + esc(S.raceName) + '" style="margin-top:4px"></label>' +
+      (S.raceName ? '' : '<div style="display:flex;flex-wrap:wrap;gap:6px">' + RACES.map(function (r) { return '<button class="pill" ' + h(function () { set({ raceName: r, raceDate: r === 'Comrades Marathon' ? '2027-06-13' : S.raceDate }); }) + '>' + r + '</button>'; }).join('') + '</div>') +
+      '<label class="muted" style="font-size:13px">Date<input class="field" type="date" data-in="raceDate" value="' + esc(S.raceDate) + '" style="margin-top:4px;font-size:17px"></label>' +
+      (S.raceDate ? '<div class="card" style="padding:14px 16px;border-radius:16px;font-size:15px;animation:rise .5s both">' + weeksTo(S.raceDate) + '</div>' : '');
+    if (S.hasRace === 'no') body += '<div class="card" style="padding:14px 16px;border-radius:16px;font-size:15px;animation:rise .5s both">Good. I’ll build steady weeks, and you can add a race any time.</div>';
+  }
+  if (id === 'days') {
+    body = '<div style="display:flex;justify-content:space-between">' + DAYS.map(function (d, i) {
+      var on = !!S.days[i];
+      return '<button class="daydot' + (on ? ' on' : '') + '" aria-pressed="' + on + '" aria-label="' + d + '" ' + h(function () { set({ days: toggle(S.days, i) }); }) + '>' + d.charAt(0) + '<span style="font-size:10px;opacity:.7">' + d.slice(1) + '</span></button>';
+    }).join('') + '</div>' +
+      '<div class="muted" style="font-size:14px;min-height:20px">' + (keys(S.days).length ? keys(S.days).length + ' days. ' + (keys(S.days).length >= 6 ? 'That’s a lot. I’ll keep some easy.' : keys(S.days).length <= 2 ? 'Two good days beat five stressful ones.' : 'A good, steady rhythm.') : 'Tap the days.') + '</div>' +
+      '<div class="muted" style="font-size:14px;font-weight:600;margin-top:8px">Usually when? <span style="font-weight:400">Optional</span></div><div style="display:flex;flex-wrap:wrap;gap:6px">' + SLOTS.map(function (o) {
+        var on = !!S.slot[o[0]];
+        return '<button class="pill' + (on ? ' on' : '') + '" aria-pressed="' + on + '" ' + h(function () { set({ slot: toggle(S.slot, o[0]) }); }) + '>' + icon(o[2], 16) + o[1] + '</button>';
+      }).join('') + '</div>';
+  }
+  if (id === 'life') body = opts(LIFE, 'life', true) + (S.life.cycle ? '<div class="muted" style="font-size:13px">Only you see this. You decide later what, if anything, to track.</div>' : '');
+  if (id === 'body') {
+    body = opts(BODY, 'body', false);
+    if (S.body === 'niggle' || S.body === 'injury') body += '<div class="muted" style="font-size:14px;font-weight:600;margin-top:4px">Where?</div><div style="display:flex;flex-wrap:wrap;gap:6px">' + [['knee', 'Knee'], ['calf', 'Calf or Achilles'], ['back', 'Lower back'], ['hip', 'Hip'], ['shoulder', 'Shoulder']].map(function (o) {
+      var on = !!S.where[o[0]];
+      return '<button class="pill' + (on ? ' on' : '') + '" aria-pressed="' + on + '" ' + h(function () { set({ where: toggle(S.where, o[0]) }); }) + '>' + o[1] + '</button>';
+    }).join('') + '</div>';
+  }
+  if (id === 'why') body = '<label for="f-why" class="sr">Your why</label><textarea id="f-why" data-in="why" placeholder="' + (S.motive === 'goal' || S.hasRace === 'yes' ? 'Finish ' + esc(S.raceName || 'my race') + '. Stay sane getting there.' : 'Feel like myself again by the end of the year.') + '" style="min-height:170px;border-radius:20px;border:1.5px solid var(--line);background:#fff;padding:18px;font-family:var(--serif);font-style:italic;font-weight:400;font-size:24px;line-height:1.25;resize:none">' + esc(S.why) + '</textarea>';
+  if (id === 'connect') body = '<div class="card" style="overflow:hidden;border-radius:20px">' + [['cal', 'Google Calendar', 'Spots early meetings and big days', 'ph-calendar-blank'], ['strava', 'Strava', 'Brings in sessions from your watch', 'ph-watch']].map(function (c) {
+    var on = !!S.conn[c[0]], busy = S.conn[c[0]] === 'busy';
+    return '<div style="display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--soft)">' + icon(c[3], 26) + '<div style="flex:1"><div style="font-weight:600">' + c[1] + '</div><div class="muted" style="font-size:14px">' + (busy ? 'Connecting…' : on ? 'Connected' : c[2]) + '</div></div>' +
+      '<button style="min-height:40px;padding:0 16px;border-radius:20px;font-size:14px;font-weight:600;' + (on && !busy ? 'background:var(--green)' : 'background:var(--ink);color:#fff') + '" ' + h(function () {
+        if (on) return; var o = Object.assign({}, S.conn); o[c[0]] = 'busy'; set({ conn: o });
+        setTimeout(function () { var p = Object.assign({}, S.conn); p[c[0]] = 1; set({ conn: p }); }, 1100);
+      }) + '>' + (busy ? '<span class="spinner" style="width:16px;height:16px;border-color:rgba(255,255,255,.3);border-top-color:#fff"></span>' : on ? 'Connected' : 'Connect') + '</button></div>';
+  }).join('') + '</div>' +
+    (S.conn.cal === 1 ? '<div class="rise" style="display:flex;flex-direction:column;gap:8px;margin-top:6px"><div style="font-weight:600">I found a few things that could get in the way</div><div class="card" style="border-radius:18px;overflow:hidden">' + CAL_FOUND.map(function (e) {
+      var on = !S.calOn || S.calOn[e[0]] !== 0;
+      return '<button style="display:flex;align-items:center;gap:12px;width:100%;padding:13px 16px;border-bottom:1px solid var(--soft);text-align:left" role="switch" aria-checked="' + on + '" ' + h(function () { var o = Object.assign({}, S.calOn); o[e[0]] = on ? 0 : 1; set({ calOn: o }); }) + '><span style="flex:1"><b style="font-weight:600">' + e[1] + '</b><span class="muted" style="display:block;font-size:13px">' + e[2] + '</span></span>' +
+        '<span style="width:44px;height:26px;border-radius:13px;padding:3px;display:flex;flex:none;justify-content:' + (on ? 'flex-end;background:var(--ink)' : 'flex-start;background:#D2D0C9') + '"><span style="width:20px;height:20px;border-radius:10px;background:#fff"></span></span></button>';
+    }).join('') + '</div><div class="muted" style="font-size:13px">Switched on means I’ll plan around it.</div></div>' : '') +
+    '<p class="muted" style="margin:0;font-size:14px">Garmin and COROS reach us through Strava for now.</p>';
+
+  var chap = st.ch, inCh = STEPS.filter(function (s) { return s.ch === chap; }), pos = inCh.indexOf(st);
+  var prog = CH.map(function (c, i) {
+    var fill = i < chap ? 100 : i > chap ? 0 : Math.round((pos + (valid(id) ? 1 : 0.4)) / inCh.length * 100);
+    return '<div style="flex:1"><div style="height:4px;border-radius:2px;background:#DAD7CF;overflow:hidden"><div style="height:100%;width:' + fill + '%;background:var(--ink);transition:width .4s"></div></div><div style="margin-top:6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:' + (i === chap ? 'var(--ink)' : '#A3A19A') + '">' + c + '</div></div>';
+  }).join('');
+  var optional = id === 'others' || id === 'why' || id === 'connect';
+  var ctaLabel = S.editFrom ? 'Save' : id === 'connect' ? (keys(S.conn).length ? 'Build my first week' : 'Skip for now') : optional && !(id === 'why' ? S.why.trim() : id === 'others' ? keys(S.others).length : 0) ? 'Skip' : 'Continue';
+  return '<div class="screen" style="padding:calc(var(--top) + 14px) 22px calc(20px + var(--bottom))">' +
+    '<div style="display:flex;align-items:flex-start;gap:14px"><button class="icon-btn" aria-label="Back" ' + h(function () { if (S.editFrom) set({ scr: 'you', editFrom: null }); else if (S.step > 0) set({ step: S.step - 1 }); else set({ scr: 'intro', introStep: INTRO.length - 1 }); }) + '>' + BACK + '</button>' +
+    '<div style="flex:1;display:flex;gap:6px;padding-top:6px" aria-label="' + CH[chap] + ', question ' + (pos + 1) + ' of ' + inCh.length + '">' + prog + '</div></div>' +
+    '<div class="strip" style="margin-top:16px" aria-label="Your profile so far">' + profileStrip() + '</div>' +
+    '<div class="scroll" style="flex:1;margin-top:16px;display:flex;flex-direction:column;gap:10px" key="' + id + '">' +
+    '<h1 class="h1 rise">' + copy[0] + '</h1><p class="muted rise" style="margin:0 0 10px;animation-delay:.08s">' + copy[1] + '</p>' +
+    '<div class="rise" style="display:flex;flex-direction:column;gap:10px;animation-delay:.16s">' + body + '</div></div>' +
+    '<button class="btn btn-ink" style="margin-top:14px" data-next ' + (valid(id) ? '' : 'disabled ') + h(function () {
+      if (!valid(id)) return;
+      if (S.editFrom) {
+        if (['primary', 'others', 'level', 'days'].indexOf(id) > -1 && S.sessions) { S.sessions = S.phase === 'day1' ? buildWeek() : weekSevenSessions(); S.done = S.phase === 'day1' ? {} : { 0: true, 1: true }; }
+        set({ scr: 'you', editFrom: null }); toastMsg('Saved. Your plan has been updated.'); return;
+      }
+      if (S.step < STEPS.length - 1) set({ step: S.step + 1 }); else startBuild();
+    }) + '>' + ctaLabel + '</button></div>';
+}
+function weeksTo(dateStr) {
+  var d = new Date(dateStr + 'T00:00:00'), now = new Date('2026-10-14T00:00:00');
+  var days = Math.round((d - now) / 86400000);
+  if (isNaN(days)) return '';
+  if (days < 0) return 'That date has passed. Pick the next one?';
+  var w = Math.floor(days / 7);
+  return '<b>' + days + ' days</b>, about ' + w + ' weeks. ' + (w >= 16 ? 'Enough for a proper build: base, build, peak, taper.' : w >= 8 ? 'A short build. I’ll keep it focused.' : 'Close. I’ll keep you fresh rather than cram.');
+}
+
+/* ---------- building your plan ---------- */
+var BUILD_LINES = [];
+function startBuild() {
+  var n = keys(S.days).length || 4;
+  BUILD_LINES = [
+    'Reading your answers',
+    'Starting at your level, not someone else’s',
+    S.life.parent || S.life.kids || S.life.hours ? 'Keeping hard days away from your busiest ones' : 'Spacing hard days apart',
+    S.body === 'niggle' || S.body === 'injury' ? 'Going gently on the ' + (keys(S.where)[0] ? { knee: 'knee', calf: 'calf', back: 'back', hip: 'hip', shoulder: 'shoulder' }[keys(S.where)[0]] : 'sore spot') : 'Leaving room to recover',
+    'Planning ' + n + ' sessions for week one'
+  ];
+  S.sessions = buildWeek(); S.phase = 'day1'; S.done = {}; S.feel = {}; S.firstDone = false; S.hintSeen = false; S.active = todayIndex();
+  set({ scr: 'build', buildStep: 0 });
+  var tick = function () { if (S.scr !== 'build') return; if (S.buildStep < BUILD_LINES.length) { set({ buildStep: S.buildStep + 1 }); tBuild = setTimeout(tick, 750); } };
+  tBuild = setTimeout(tick, 500);
+}
+function build() {
+  var doneAll = S.buildStep >= BUILD_LINES.length;
+  var lines = BUILD_LINES.map(function (l, i) {
+    var state = i < S.buildStep ? 'done' : i === S.buildStep ? 'now' : 'next';
+    return '<div style="display:flex;align-items:center;gap:12px;font-size:17px;opacity:' + (state === 'next' ? .35 : 1) + ';transition:opacity .3s">' +
+      (state === 'done' ? '<span style="width:22px;height:22px;border-radius:11px;background:var(--green);display:flex;align-items:center;justify-content:center;animation:pop .35s both">' + icon('ph-check', 14, '#111') + '</span>' : state === 'now' ? '<span class="spinner"></span>' : '<span style="width:22px;height:22px;border-radius:11px;border:2px solid #DAD7CF"></span>') + '<span>' + l + '</span></div>';
+  }).join('');
+  var week = '';
+  if (doneAll) {
+    week = '<div class="card rise" style="padding:6px 16px;margin-top:20px">' + S.sessions.map(function (x, i) {
+      var w = W[x.key], s = sp(w.sport);
+      return '<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--soft);animation:rise .5s ' + (i * 0.08) + 's both"><span class="muted" style="width:36px;font-size:14px">' + (x.day === TODAY_IDX ? '<b style="color:var(--ink)">Today</b>' : DAYS[x.day]) + '</span>' + icon(s.icon, 22, s.col) + '<span style="flex:1;font-weight:600">' + wname(x.key) + '</span><span class="muted" style="font-size:14px">' + mins(x.key) + ' min</span></div>';
+    }).join('') + '</div>';
+  }
+  return '<div class="screen' + (S.buildStep === 0 ? ' fade' : '') + '" style="padding:calc(var(--top) + 40px) 24px calc(24px + var(--bottom))">' +
+    (doneAll ? '<div class="kicker muted rise">Week one</div><h1 class="h1 rise" style="font-size:34px">Here’s where you start, ' + esc(first()) + '.</h1><p class="muted rise" style="margin:8px 0 0">A starting point, not a contract. Nothing’s locked.</p>'
+      : '<div class="kicker muted">One moment</div><h1 class="h1" style="font-size:34px">Building your first week</h1>') +
+    '<div class="scroll" style="flex:1"><div style="display:flex;flex-direction:column;gap:16px;margin-top:28px">' + (doneAll ? '' : lines) + '</div>' + week + '</div>' +
+    (doneAll ? '<button class="btn btn-ink rise" style="animation-delay:.4s" ' + h(function () { set({ scr: 'today' }); }) + '>Take me in</button>' : '') + '</div>';
+}
+
+/* ---------- home ---------- */
+function headerPhoto(img, kicker, a, b, extra) {
+  return '<div class="photo" style="height:calc(280px + var(--top))"><img src="' + img + '" alt=""><div class="scrim"></div><div class="in">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center">' + logo(20, '#fff') + (extra || '') + '</div>' +
+    '<div class="kicker" style="margin-top:auto;color:rgba(255,255,255,.85)">' + kicker + '</div><div class="disp" style="font-size:38px">' + a + '</div><div class="disp-i" style="font-size:38px">' + b + '</div></div></div>';
+}
+function raceChip() {
+  if (S.hasRace !== 'yes' || !S.raceDate) return '';
+  var days = Math.round((new Date(S.raceDate + 'T00:00:00') - new Date('2026-10-14T00:00:00')) / 86400000);
+  return days > 0 ? '<span style="font-size:13px;font-weight:600;background:rgba(255,255,255,.16);border-radius:999px;padding:6px 10px">' + esc(S.raceName.replace(' Marathon', '')) + ' in ' + days + ' days</span>' : '';
+}
+function sessionCard(i, delay) {
+  var x = sess(i), w = W[x.key], s = sp(w.sport), done = !!S.done[i], rest = x.rest;
+  var whenTxt = x.day === TODAY_IDX ? 'Today' : DAYS[x.day];
+  if (rest) {
+    return '<section class="card rise" style="border-radius:24px;padding:18px;animation-delay:' + delay + 's"><span class="chip" style="background:var(--soft);color:var(--muted)">Rest</span>' +
+      '<div style="margin-top:8px;font-family:var(--serif);font-weight:500;font-size:26px;letter-spacing:-.4px">Rest today</div><div class="muted">' + (rest === 'moved' ? wname(x.base) + ' moved to ' + dayName(x.movedTo) + '.' : 'Skipped. The week still works.') + '</div>' +
+      '<div class="muted" style="display:flex;align-items:center;gap:10px;font-size:14px;margin-top:6px"><span style="flex:1"></span><button style="min-height:40px;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:3px" ' + h(undo) + '>Undo</button></div></section>';
+  }
+  return '<section class="card rise" style="border-radius:24px;overflow:hidden;animation-delay:' + delay + 's"><button style="width:100%;text-align:left;padding:18px 18px 14px;display:block" ' + h(function () { if (!done) set({ active: i, from: 'today', scr: 'workout' }); }) + '>' +
+    '<span style="display:flex;align-items:center;gap:8px"><span class="chip" style="background:' + s.col + '">' + icon(s.icon, 14, '#fff') + s.short + '</span><span class="muted" style="flex:1;font-size:14px">' + whenTxt + ', ' + (x.time || (S.slot.pm && !S.slot.am ? '7 pm' : '6:15 am')) + '</span>' + (x.indoor ? '<span class="tag">Treadmill</span>' : '') + (done ? '' : CHEV) + '</span>' +
+    '<span style="display:block;margin-top:8px;font-family:var(--serif);font-weight:500;font-size:26px;letter-spacing:-.4px;line-height:1.1">' + wname(x.key) + (done ? ', done' : '') + '</span>' +
+    '<span class="muted" style="display:block;font-size:15px">' + (done ? w.stat + (S.feel[i] ? '. Felt ' + S.feel[i] + '.' : '.') : 'About ' + mins(x.key) + ' min, ' + EFF[peak(x.key)].toLowerCase() + ' at most') + '</span>' +
+    (done ? '' : '<span style="display:block;margin-top:12px">' + bars(x.key, 30) + '</span>') + '</button>' +
+    (done ? '<div style="padding:4px 18px 18px"><button class="btn btn-green" style="height:50px" ' + h(function () { set({ active: i, scr: 'share' }); }) + '>Keep or share</button></div>'
+      : '<div class="row" style="padding:4px 18px 18px"><button class="btn btn-ink" style="height:50px" ' + h(function () { S.active = i; didIt(); }) + '>I did it</button><button class="btn btn-out" style="height:50px" ' + h(function () { set({ active: i, sheet: 'cant', cant: null, moveDay: null }); }) + '>Can’t today</button></div>') +
+    (x.key !== x.base && !done ? '<div class="muted" style="display:flex;align-items:center;gap:10px;font-size:14px;padding:0 18px 14px"><span style="flex:1">Changed from ' + wname(x.base) + '.</span><button style="min-height:36px;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:3px" ' + h(undo) + '>Undo</button></div>' : '') +
+    '</section>';
+}
+function planView() {
+  var hasRace = S.hasRace === 'yes' && S.raceDate;
+  if (!hasRace) {
+    return headerPhoto(PH.group, 'Your plan', 'Steady weeks,', 'no deadline.') +
+      '<div style="padding:20px 16px;display:flex;flex-direction:column;gap:14px"><div class="card rise" style="padding:24px 20px;border-radius:22px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px">' + icon('ph-flag-checkered', 40) +
+      '<b style="font-size:18px">No race yet</b><span class="muted">That’s fine. When you pick one, I’ll build base, build, peak and taper back from the date.</span><button class="btn btn-ink" style="margin-top:6px" ' + h(function () { set({ scr: 'onb', step: STEPS.findIndex(function (s) { return s.id === 'race'; }) }); }) + '>Add a race</button></div></div>';
+  }
+  var totalDays = Math.round((new Date(S.raceDate + 'T00:00:00') - new Date('2026-10-12T00:00:00')) / 86400000);
+  var N = Math.max(6, Math.min(40, Math.ceil(totalDays / 7)));
+  var cur = S.phase === 'day1' ? 1 : 2;
+  var cut = [Math.round(N * .3), Math.round(N * .65), Math.round(N * .87)];
+  var b = '';
+  for (var i = 1; i <= N; i++) {
+    var ph = i <= cut[0] ? 0 : i <= cut[1] ? 1 : i <= cut[2] ? 2 : 3, deload = i % 4 === 0 && i <= cut[2];
+    var vol = [34, 52, 74, 60][ph] + (ph < 3 ? (i % 4) * 5 : -(i - cut[2]) * (30 / Math.max(1, N - cut[2]))); if (deload) vol *= 0.62;
+    b += '<div style="flex:1;border-radius:3px;height:' + Math.round(vol) + '%;background:' + ['#D2D0C9', '#8C8A84', '#111111', '#6DB33F'][ph] + ';' + (deload ? 'opacity:.45;' : '') + (i === cur ? 'outline:2px solid #111;outline-offset:1px' : '') + ';animation:rise .5s ' + (i * 0.015) + 's both"></div>';
+  }
+  var lifeRows = S.phase === 'day1' ? [] : [['#9DB2D3', 'Diwali', 'Sun 8 Nov. That week stays lighter.', 'Planned'], ['#9DB2D3', 'Year-end crunch at work', '14 to 24 Dec. Short weekday sessions.', 'Planned']];
+  var PT = [
+    [['#D2D0C9', 'Base', 'Weeks 1 to ' + cut[0] + '. Easy volume, strength, habits.', 'Now'], ['#8C8A84', 'Build', 'Weeks ' + (cut[0] + 1) + ' to ' + cut[1] + '. Longer long sessions.', ''], ['#111111', 'Peak', 'Weeks ' + (cut[1] + 1) + ' to ' + cut[2] + '. Your biggest weeks.', ''], ['#D9D3C7', 'Deload', 'Every 4th week. Lighter on purpose.', ''], ['#6DB33F', 'Taper', 'Last ' + (N - cut[2]) + ' weeks. Less volume, stay sharp.', '']],
+    [['#111111', S.raceName, new Date(S.raceDate + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + '.', 'Goal']],
+    lifeRows
+  ];
+  var rowsHtml = PT[S.planTab].map(function (r) {
+    return '<div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--soft)"><span style="width:12px;height:12px;flex:none;border-radius:' + (S.planTab === 2 ? '3px' : '6px') + ';background:' + r[0] + '"></span><div style="flex:1"><div style="font-weight:600">' + esc(r[1]) + '</div><div class="muted" style="font-size:13px">' + r[2] + '</div></div>' + (r[3] ? '<span class="tag' + (r[3] === 'Now' || r[3] === 'Goal' ? ' g' : '') + '">' + r[3] + '</span>' : '') + '</div>';
+  }).join('');
+  if (S.planTab === 2 && !lifeRows.length) rowsHtml = '<div style="padding:22px 4px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px">' + icon('ph-airplane-tilt', 32) + '<b>Nothing here yet</b><span class="muted" style="font-size:14px">Trips, festivals, busy weeks. Add them, or let your calendar find them.</span></div>';
+  var days = Math.round((new Date(S.raceDate + 'T00:00:00') - todayDate()) / 86400000);
+  return headerPhoto(PH.group, new Date(S.raceDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' }), esc(S.raceName), 'in ' + days + ' days.') +
+    '<div style="padding:18px 16px 24px;display:flex;flex-direction:column;gap:14px"><section class="card" style="padding:16px"><div class="muted" style="font-size:14px;margin-bottom:10px">Week ' + cur + ' of ' + N + '</div><div role="img" aria-label="' + N + ' week build: base, build, peak, taper, lighter every fourth week" style="display:flex;align-items:flex-end;gap:2px;height:96px">' + b + '</div>' +
+    '<div class="muted" style="display:grid;grid-template-columns:' + cut[0] + 'fr ' + (cut[1] - cut[0]) + 'fr ' + (cut[2] - cut[1]) + 'fr ' + (N - cut[2]) + 'fr;gap:2px;margin-top:8px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase"><span style="border-top:2px solid #D2D0C9;padding-top:4px">Base</span><span style="border-top:2px solid #8C8A84;padding-top:4px">Build</span><span style="border-top:2px solid #111;padding-top:4px">Peak</span><span style="border-top:2px solid #6DB33F;padding-top:4px">Taper</span></div></section>' +
+    '<div role="tablist" style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:#E8E6DF;border-radius:14px;padding:4px">' + ['Phases', 'Races', 'Life'].map(function (l, i) {
+      var on = S.planTab === i;
+      return '<button role="tab" aria-selected="' + on + '" style="min-height:40px;border-radius:11px;font-size:14px;font-weight:600;' + (on ? 'background:#fff' : 'color:var(--muted)') + '" ' + h(function () { set({ planTab: i }); }) + '>' + l + '</button>';
+    }).join('') + '</div><section class="card" style="padding:4px 16px">' + rowsHtml + (S.planTab > 0 ? '<button style="min-height:48px;font-weight:600">' + (S.planTab === 1 ? '+ Add a race' : '+ Add something from life') + '</button>' : '') + '</section></div>';
+}
+/* ---------- dates, calendar events ---------- */
+var PLAN_START = new Date('2026-10-14T00:00:00');
+var WEEK1_MON = new Date('2026-10-12T00:00:00');
+function addD(d, n) { var x = new Date(d); x.setDate(x.getDate() + n); return x; }
+function ymd(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function todayDate() { return S.phase === 'day1' ? new Date('2026-10-14T00:00:00') : new Date('2026-10-21T00:00:00'); }
+function weekMon() { return S.phase === 'day1' ? WEEK1_MON : addD(WEEK1_MON, 7); }
+function dayName(i) { return i === 7 ? 'next Mon' : DAYS[i]; }
+function planInfo() {
+  var t = todayDate(), info = { dayN: Math.round((t - PLAN_START) / 864e5) + 1, weekN: Math.floor((t - WEEK1_MON) / (7 * 864e5)) + 1, weeks: null, raceDays: null };
+  if (S.hasRace === 'yes' && S.raceDate) {
+    var r = new Date(S.raceDate + 'T00:00:00');
+    info.raceDays = Math.round((r - t) / 864e5);
+    info.weeks = Math.max(6, Math.min(40, Math.ceil((r - WEEK1_MON) / (7 * 864e5))));
+  }
+  return info;
+}
+var CAL_FOUND = [['wedding', 'Cousin’s wedding', 'Sat 17 Oct, all day', '2026-10-17'], ['amma', 'Amma’s check-up', 'Thu 22 Oct, 8 am', '2026-10-22'], ['trip', 'Work trip, Mumbai', 'Mon 2 to Wed 4 Nov', '2026-11-02'], ['diwali', 'Diwali', 'Sun 8 Nov', '2026-11-08']];
+function calEventsOn(ds) {
+  if (!S.conn.cal) return [];
+  return CAL_FOUND.filter(function (e) {
+    if (S.calOn && S.calOn[e[0]] === 0) return false;
+    if (e[0] === 'trip') return ds >= '2026-11-02' && ds <= '2026-11-04';
+    return e[3] === ds;
+  });
+}
+function templateByDay() {
+  if (S.phase === 'day1' && S.template) return S.template;
+  var t = {};
+  (S.sessions || []).forEach(function (x) { if (x.day < 7 && !(x.rest === 'moved' && t[x.day])) t[x.day] = x.base; });
+  return t;
+}
+function sessionsOn(d) {
+  var ds = ymd(d), out = [];
+  if (d < PLAN_START) return out;
+  if (S.hasRace === 'yes' && S.raceDate) { if (ds > S.raceDate) return out; if (ds === S.raceDate) return [{ race: true }]; }
+  var mon = weekMon(), idx = (d.getDay() + 6) % 7, diff = Math.round((d - mon) / 864e5);
+  if (diff >= 0 && diff < 7) {
+    S.sessions.forEach(function (x, i) { if (x.day === idx) out.push({ key: x.key, done: !!S.done[i], rest: x.rest, movedTo: x.movedTo, i: i }); });
+    return out;
+  }
+  if (diff >= 7 && diff < 14 && idx === 0) S.sessions.forEach(function (x, i) { if (x.day === 7) out.push({ key: x.key, i: i, moved: true }); });
+  var tk = templateByDay()[idx];
+  if (tk) out.push({ key: tk, done: d < mon });
+  return out;
+}
+
+/* ---------- home ---------- */
+function greeting() { return 'Good morning'; }
+function nudgeCard(ic, html, actions) {
+  return '<section class="card rise" style="padding:16px;border-radius:20px;display:flex;flex-direction:column;gap:12px;border:1.5px solid var(--line)"><div style="display:flex;gap:12px;align-items:flex-start">' + icon(ic, 24) + '<div style="flex:1;font-size:15px">' + html + '</div></div><div style="display:flex;gap:8px;flex-wrap:wrap">' + actions + '</div></section>';
+}
+function nudgeBtn(label, fn, primary) { return '<button class="pill' + (primary ? ' on' : '') + '" style="min-height:40px;' + (primary ? '' : 'background:var(--paper)') + '" ' + h(fn) + '>' + label + '</button>'; }
+function nudges(ti) {
+  var out = '', day1 = S.phase === 'day1', x = sess(ti), done = !!S.done[ti], nd = S.nudge || {};
+  var sunI = S.sessions.findIndex(function (y) { return y.day === 6 && !y.rest; });
+  if (day1 && S.conn.cal && (!S.calOn || S.calOn.wedding !== 0) && sunI > -1 && !nd.wedding) {
+    out += nudgeCard('ph-calendar-heart', '<b>From your calendar.</b> Your cousin’s wedding is on Saturday. A 6 am ' + wname(sess(sunI).key) + ' the morning after sounds rough. Move it to Monday?',
+      nudgeBtn('Move to Monday', function () {
+        var snap = snapshot(), list = JSON.parse(JSON.stringify(S.sessions)), c = list[sunI];
+        list.push({ day: 7, key: c.key, base: c.base }); c.rest = 'moved'; c.movedTo = 7;
+        Object.assign(S, { prev: snap, sessions: list, nudge: Object.assign({}, nd, { wedding: 'moved' }) }); toastMsg('Moved to Monday. Enjoy the wedding.');
+      }, true) + nudgeBtn('Keep Sunday', function () { set({ nudge: Object.assign({}, nd, { wedding: 'kept' }) }); }));
+  }
+  if (!day1 && S.conn.cal && !done && !x.rest && !nd.clash) {
+    out += nudgeCard('ph-warning-circle', '<b>New on your calendar.</b> A 6:30 am call with the US team, right over your ' + W[x.key].b + '. When works instead?',
+      [['5:30 am', '5:30 am'], ['7:30 pm', '7:30 pm']].map(function (t, j) {
+        return nudgeBtn(t[0], function () { var list = JSON.parse(JSON.stringify(S.sessions)); list[ti].time = t[1]; Object.assign(S, { prev: snapshot(), sessions: list, nudge: Object.assign({}, nd, { clash: t[1] }) }); toastMsg('Moved to ' + t[1] + '. Your call stays put.'); }, j === 1);
+      }).join('') + nudgeBtn('Tomorrow', function () { set({ active: ti, sheet: 'cant', cant: 'move', nudge: Object.assign({}, nd, { clash: 'tmrw' }) }); }));
+  }
+  if (!day1 && W[x.key].sport === 'run' && !done && !x.rest && !nd.aqi && nd.clash) {
+    out += nudgeCard('ph-wind', '<b>Air at ' + (x.time || '6:15 am') + ' looks poor</b> in Bengaluru (AQI 168). Your lungs would thank you for a treadmill or a later start.',
+      nudgeBtn('Treadmill instead', function () { var list = JSON.parse(JSON.stringify(S.sessions)); list[ti].indoor = true; Object.assign(S, { prev: snapshot(), sessions: list, nudge: Object.assign({}, nd, { aqi: 'indoor' }) }); toastMsg('Treadmill it is. Same session, indoors.'); }, true) +
+      nudgeBtn('Run anyway', function () { set({ nudge: Object.assign({}, nd, { aqi: 'ok' }) }); }));
+  }
+  return out;
+}
+function todayView() {
+  var ti = todayIndex(), day1 = S.phase === 'day1', x = sess(ti), done = !!S.done[ti], pi = planInfo();
+  var img = x.rest ? PH.rest : done ? PH.night : day1 ? PH.laces : PH.sprint;
+  var title = done ? (day1 ? 'That’s day one, ' : 'Nicely done, ') + esc(first()) + '.' : x.rest ? 'A rest day, ' + esc(first()) + '.' : greeting() + ', ' + esc(first()) + '.';
+  var out = '<div class="photo" style="height:calc(250px + var(--top))"><img src="' + img + '" alt=""><div class="scrim"></div><div class="in">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center">' + logo(20, '#fff') +
+    '<button aria-label="You" style="width:40px;height:40px;border-radius:20px;background:rgba(255,255,255,.18);color:#fff;font-family:var(--serif);font-size:18px" ' + h(function () { set({ scr: 'you' }); }) + '>' + esc(first().charAt(0).toUpperCase()) + '</button></div>' +
+    '<div class="kicker" style="margin-top:auto;color:rgba(255,255,255,.85)">' + todayDate().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) + '</div>' +
+    '<div class="disp" style="font-size:36px;margin-top:4px">' + title + '</div></div></div>';
+  out += '<div style="padding:14px 16px 24px;display:flex;flex-direction:column;gap:12px">';
+  out += '<div class="row rise">' +
+    '<div class="stat"><b>Day ' + pi.dayN + '</b><span>of your plan</span></div>' +
+    '<div class="stat"><b>Week ' + pi.weekN + '</b><span>' + (pi.weeks ? 'of ' + pi.weeks : 'steady weeks') + '</span></div>' +
+    (pi.raceDays != null ? '<div class="stat"><b>' + pi.raceDays + '</b><span>days to ' + esc(S.raceName.replace(' Marathon', '')) + '</span></div>' : '<div class="stat"><b>' + S.sessions.length + '</b><span>sessions this week</span></div>') + '</div>';
+  out += S.why.trim() ? '<button class="rise" style="text-align:left;padding:4px 4px 0;animation-delay:.05s" ' + h(function () { set({ scr: 'why', from: 'today' }); }) + '><span class="kicker muted" style="display:flex;align-items:center;gap:6px">' + icon('ph-heart', 14) + 'Your why</span><span class="serif" style="display:block;font-style:italic;font-size:21px;line-height:1.3;margin-top:4px">“' + esc(S.why.trim()) + '”</span></button>'
+    : '<button class="card rise" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:18px;text-align:left;border:1.5px dashed #CDCAC2;background:transparent" ' + h(function () { set({ sheet: 'why' }); }) + '>' + icon('ph-heart', 22) + '<span style="flex:1"><b>Add your why</b><span class="muted" style="display:block;font-size:14px">One line for the hard mornings.</span></span></button>';
+  out += nudges(ti);
+  out += '<div class="sec">Today</div>' + sessionCard(ti, 0.12);
+  if (day1 && !S.hintSeen && !done && !x.rest) out += '<div class="hint rise" style="animation-delay:.6s" role="note">' + icon('ph-lightbulb', 20, '#6DB33F') + '<span style="flex:1">Nothing here is locked. Open a session to change it, or tap Can’t today when life gets in the way.</span><button style="color:var(--green);font-weight:700;min-height:28px" ' + h(function () { set({ hintSeen: true }); }) + '>Got it</button></div>';
+  // this week strip
+  var mon = weekMon();
+  out += '<div class="sec" style="display:flex;justify-content:space-between;align-items:baseline">This week<button class="muted" style="font-family:Figtree;font-size:14px;font-weight:600" ' + h(function () { set({ scr: 'calendar', calMonth: 0, calSel: null }); }) + '>Calendar</button></div>' +
+    '<div class="card rise" style="padding:12px;border-radius:20px;display:grid;grid-template-columns:repeat(7,1fr);gap:4px;animation-delay:.2s">' + DAYS.map(function (d, di) {
+      var date = addD(mon, di), items = sessionsOn(date).filter(function (y) { return !y.rest; }), isT = di === TODAY_IDX;
+      var it = items[0], col = it && it.key ? sp(W[it.key].sport).col : null;
+      return '<button style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 0;border-radius:14px;' + (isT ? 'background:var(--ink);color:#fff' : '') + '" ' + h(function () { set({ scr: 'calendar', calMonth: 0, calSel: ymd(date) }); }) + '>' +
+        '<span style="font-size:12px;font-weight:600;opacity:.75">' + d.charAt(0) + '</span><span style="font-size:15px;font-weight:600">' + date.getDate() + '</span>' +
+        '<span style="width:26px;height:26px;border-radius:13px;display:flex;align-items:center;justify-content:center;' + (it && it.done ? 'background:' + col : it ? 'border:1.5px solid ' + (isT ? '#fff' : col) : '') + '">' + (it ? icon(sp(W[it.key].sport).icon, 14, it.done ? '#fff' : isT ? '#fff' : col) : '') + '</span></button>';
+    }).join('') + '</div>';
+  if (day1) {
+    var items = [['Do your first session', !!S.done[ti] || !!x.rest], ['Connect your watch', !!S.conn.strava], ['Add your why', !!S.why.trim()]];
+    var n = items.filter(function (it) { return it[1]; }).length;
+    out += '<section class="card rise" style="padding:16px;border-radius:20px;animation-delay:.25s"><div style="display:flex;justify-content:space-between;align-items:center"><b>Getting started</b><span class="muted" style="font-size:14px">' + n + ' of 3</span></div>' +
+      items.map(function (it, j) {
+        var fn = j === 1 && !it[1] ? function () { set({ sheet: 'connect' }); } : j === 2 && !it[1] ? function () { set({ sheet: 'why' }); } : null;
+        var inner = '<span style="width:22px;height:22px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;' + (it[1] ? 'background:var(--green)' : 'border:2px solid #CDCAC2') + '">' + (it[1] ? icon('ph-check', 14, '#111') : '') + '</span><span style="flex:1;' + (it[1] ? 'color:var(--muted);text-decoration:line-through' : '') + '">' + it[0] + '</span>' + (fn ? CHEV : '');
+        return fn ? '<button style="display:flex;align-items:center;gap:12px;width:100%;padding:12px 0 0;text-align:left" ' + h(fn) + '>' + inner + '</button>' : '<div style="display:flex;align-items:center;gap:12px;padding:12px 0 0">' + inner + '</div>';
+      }).join('') + '</section>';
+  } else {
+    out += '<div class="card rise" style="padding:14px 16px;border-radius:18px;display:flex;gap:12px;align-items:center;animation-delay:.25s">' + icon('ph-calendar-check', 24) + '<span style="flex:1;font-size:15px"><b>Week one: 4 of 5 done.</b> One moved, one plan B. That counts.</span></div>';
+  }
+  out += '<div style="display:flex;justify-content:center;gap:16px;padding-top:10px;font-size:13px" class="muted"><button style="text-decoration:underline;text-underline-offset:3px;min-height:36px" ' + h(function () {
+    if (day1) { S.phase = 'day7'; S.sessions = weekSevenSessions(); S.done = { 0: true, 1: true }; S.feel = {}; S.hintSeen = true; S.firstDone = true; S.nudge = {}; set({ scr: 'today' }); }
+    else { S.phase = 'day1'; S.sessions = buildWeek(); S.done = {}; S.feel = {}; S.nudge = {}; set({ scr: 'today' }); }
+  }) + '>Prototype: ' + (day1 ? 'jump to week two' : 'back to day one') + '</button></div>';
+  return out + '</div>';
+}
+
+/* ---------- calendar ---------- */
+function calendarView() {
+  var m = S.calMonth || 0, firstD = new Date(2026, 9 + m, 1), dim = new Date(2026, 10 + m, 0).getDate(), lead = (firstD.getDay() + 6) % 7;
+  var todayS = ymd(todayDate()), sel = S.calSel || todayS;
+  var cells = '';
+  for (var b = 0; b < lead; b++) cells += '<div></div>';
+  for (var dn = 1; dn <= dim; dn++) {
+    var d = new Date(2026, 9 + m, dn), ds = ymd(d), items = sessionsOn(d), evs = calEventsOn(ds);
+    var dots = items.slice(0, 2).map(function (y) {
+      if (y.race) return icon('ph-flag-checkered', 12, ds === todayS ? '#fff' : '#111');
+      if (y.rest) return '<span style="width:7px;height:7px;border-radius:4px;border:1.5px solid #A3A19A"></span>';
+      var c = sp(W[y.key].sport).col;
+      return '<span style="width:7px;height:7px;border-radius:4px;' + (y.done ? 'background:' + c : 'border:1.5px solid ' + c) + '"></span>';
+    }).join('');
+    cells += '<button class="cal-cell' + (d >= PLAN_START || evs.length ? ' in' : '') + (ds === todayS ? ' today' : '') + (ds === sel ? ' sel' : '') + '" aria-label="' + d.toDateString() + '" ' + h((function (s2) { return function () { set({ calSel: s2 }); }; })(ds)) + '>' + dn +
+      '<span style="display:flex;gap:3px;align-items:center;height:12px">' + dots + '</span>' + (evs.length ? '<span style="width:14px;height:3px;border-radius:2px;background:#7E9CCB"></span>' : '') + '</button>';
+  }
+  var sd = new Date(sel + 'T00:00:00'), sItems = sessionsOn(sd), sEv = calEventsOn(sel);
+  var detail = sItems.map(function (y) {
+    if (y.race) return '<div class="lrow">' + icon('ph-flag-checkered', 22) + '<span style="flex:1"><b>' + esc(S.raceName) + '</b><span class="muted" style="display:block;font-size:13px">Race day</span></span><span class="tag g">Goal</span></div>';
+    if (y.rest) return '<div class="lrow muted">' + icon('ph-moon', 22) + '<span style="flex:1">' + (y.rest === 'moved' ? 'Moved to ' + dayName(y.movedTo) : 'Skipped') + '</span></div>';
+    var w = W[y.key], s = sp(w.sport);
+    var row = icon(s.icon, 22, s.col) + '<span style="flex:1"><b>' + wname(y.key) + '</b><span class="muted" style="display:block;font-size:13px">' + (y.done ? w.stat : mins(y.key) + ' min, ' + EFF[peak(y.key)].toLowerCase()) + '</span></span>' + (y.done ? '<span class="tag g">Done</span>' : y.moved ? '<span class="tag">Moved</span>' : '');
+    return y.i != null && !y.done ? '<button class="lrow" ' + h(function () { set({ active: y.i, from: 'calendar', scr: 'workout' }); }) + '>' + row + CHEV + '</button>' : '<div class="lrow">' + row + '</div>';
+  }).join('') + sEv.map(function (e) { return '<div class="lrow">' + icon('ph-calendar-blank', 22, '#2F4E7C') + '<span style="flex:1"><b>' + e[1] + '</b><span class="muted" style="display:block;font-size:13px">' + e[2] + '</span></span><span class="tag c">Calendar</span></div>'; }).join('');
+  if (!detail) detail = '<div class="lrow muted">' + icon(sd < PLAN_START ? 'ph-hourglass' : 'ph-moon', 22) + (sd < PLAN_START ? 'Before your plan started' : 'Rest day') + '</div>';
+  var sportsUsed = [S.primary || 'run'].concat(keys(S.others).filter(function (k) { return k !== S.primary; }));
+  return '<div style="padding:calc(var(--top) + 22px) 20px 8px"><div class="kicker muted">Your calendar</div>' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px"><h1 class="h1">' + firstD.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) + '</h1><div style="display:flex;gap:6px">' +
+    '<button class="icon-btn" aria-label="Previous month" ' + (m <= 0 ? 'disabled style="opacity:.35"' : '') + ' ' + h(function () { if (m > 0) set({ calMonth: m - 1, calSel: null }); }) + '>' + BACK + '</button>' +
+    '<button class="icon-btn" aria-label="Next month" ' + h(function () { set({ calMonth: m + 1, calSel: null }); }) + '><span style="transform:scaleX(-1);display:flex">' + BACK + '</span></button></div></div>' +
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px">' + sportsUsed.map(function (k) { return '<span class="pill" style="min-height:30px;font-size:13px">' + icon(sp(k).icon, 14, sp(k).col) + sp(k).short + '</span>'; }).join('') + (S.conn.cal ? '<span class="pill" style="min-height:30px;font-size:13px"><span style="width:12px;height:3px;border-radius:2px;background:#7E9CCB"></span>Your calendar</span>' : '') + '</div></div>' +
+    '<div style="padding:8px 16px 0"><div class="cal-grid" style="margin-bottom:6px">' + ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(function (x) { return '<div class="muted" style="text-align:center;font-size:12px;font-weight:600">' + x + '</div>'; }).join('') + '</div><div class="cal-grid rise">' + cells + '</div></div>' +
+    '<div style="padding:16px"><div class="sec" style="margin:0 4px 6px">' + sd.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) + '</div><section class="card" style="padding:2px 16px;border-radius:20px">' + detail + '</section>' +
+    (S.conn.cal ? '<button class="lrow muted" style="border:0;justify-content:center;gap:8px" ' + h(function () { toastMsg('Your plan now shows in Google Calendar and updates itself.'); }) + '>' + icon('ph-calendar-plus', 18) + 'Show my plan in Google Calendar</button>' : '') + '</div>';
+}
+
+/* ---------- you, profiles, why ---------- */
+function editStep(id) { return function () { set({ scr: 'onb', step: STEPS.findIndex(function (s) { return s.id === id; }), editFrom: 'you' }); }; }
+function lrowBtn(ic, label, value, fn) { return '<button class="lrow" ' + h(fn) + '>' + icon(ic, 22) + '<span style="flex:1;font-weight:500">' + label + '</span><span class="muted" style="font-size:14px;max-width:150px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + value + '</span>' + CHEV + '</button>'; }
+function youView() {
+  var age = (AGES.filter(function (a) { return a[0] === S.age; })[0] || [0, ''])[1];
+  var sportsTxt = [S.primary].concat(keys(S.others)).filter(Boolean).map(function (k) { return sp(k).short; }).join(', ');
+  var motive = (MOTIVE.filter(function (a) { return a[0] === S.motive; })[0] || [0, ''])[1];
+  var lifeTxt = keys(S.life).map(function (k) { return (LIFE.filter(function (a) { return a[0] === k; })[0] || [0, ''])[1]; }).join(', ');
+  var bodyTxt = (BODY.filter(function (a) { return a[0] === S.body; })[0] || [0, ''])[1];
+  var sec = function (t, rows) { return '<div class="sec" style="margin-top:6px">' + t + '</div><section class="card" style="padding:2px 16px;border-radius:20px">' + rows + '</section>'; };
+  var conn = function (k, label, ic) {
+    var on = !!S.conn[k];
+    return '<div class="lrow">' + icon(ic, 22) + '<span style="flex:1;font-weight:500">' + label + '</span>' + (on ? '<span class="tag g">Connected</span>' : '<button class="pill on" style="min-height:34px" ' + h(function () { set({ sheet: k === 'strava' ? 'connect' : null, conn: k === 'cal' ? Object.assign({}, S.conn, { cal: 1 }) : S.conn }); }) + '>Connect</button>') + '</div>';
+  };
+  var profs = P.list.map(function (p) {
+    var cur = p.id === P.cur, nm = cur ? first() : (p.name || 'New profile');
+    return '<button class="lrow" ' + h(function () { if (!cur) switchProfile(p.id); }) + '><span style="width:32px;height:32px;border-radius:16px;background:' + (cur ? 'var(--ink)' : 'var(--soft)') + ';color:' + (cur ? '#fff' : 'var(--ink)') + ';display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:16px;flex:none">' + esc(nm.charAt(0).toUpperCase()) + '</span><span style="flex:1;font-weight:500">' + esc(nm) + (cur ? ' <span class="muted" style="font-weight:400">(you)</span>' : '') + '</span>' + (cur ? icon('ph-check', 18) : CHEV) + '</button>';
+  }).join('') + '<button class="lrow" ' + h(addProfile) + '>' + icon('ph-user-plus', 22) + '<span style="flex:1;font-weight:500">Add another profile</span>' + CHEV + '</button>';
+  return '<div style="padding:calc(var(--top) + 28px) 16px 24px">' +
+    '<div style="display:flex;align-items:center;gap:16px;padding:0 4px"><span style="position:relative;width:64px;height:64px;border-radius:32px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:30px;flex:none">' + esc(first().charAt(0).toUpperCase()) + '<span style="position:absolute;right:2px;bottom:4px;width:14px;height:14px;border-radius:7px;background:var(--green);border:3px solid var(--paper)"></span></span>' +
+    '<div><h1 class="h1" style="font-size:30px">' + esc(S.name || 'You') + '</h1><div class="muted" style="font-size:14px">' + [age, sportsTxt].filter(Boolean).join(' · ') + '</div></div></div>' +
+    '<div style="display:flex;flex-direction:column;gap:6px;margin-top:18px">' +
+    sec('Profile', lrowBtn('ph-user', 'Name', esc(S.name), editStep('name')) + lrowBtn('ph-cake', 'Age', age, editStep('age')) + lrowBtn('ph-briefcase', 'Your week', keys(S.work).length + ' picked', editStep('work')) + lrowBtn('ph-sparkle', 'What moves you', motive, editStep('motive'))) +
+    sec('Training', lrowBtn(sp(S.primary || 'run').icon, 'Main sport', sp(S.primary || 'run').name, editStep('primary')) + lrowBtn('ph-plus-circle', 'Also', keys(S.others).map(function (k) { return sp(k).short; }).join(', ') || 'None', editStep('others')) + lrowBtn('ph-chart-bar', 'Level', S.level != null ? LEVELS[S.level][0] : '', editStep('level')) + lrowBtn('ph-flag-checkered', 'Goal race', S.hasRace === 'yes' ? esc(S.raceName) : 'None yet', editStep('race')) + lrowBtn('ph-calendar-blank', 'Training days', keys(S.days).map(function (d) { return DAYS[d]; }).join(', '), editStep('days'))) +
+    sec('Life and body', lrowBtn('ph-house-line', 'On your plate', lifeTxt, editStep('life')) + lrowBtn('ph-bandaids', 'Body', bodyTxt, editStep('body')) + lrowBtn('ph-heart', 'Your why', S.why.trim() ? 'Open' : 'Add', function () { set({ scr: 'why', from: 'you' }); })) +
+    sec('Connections', conn('cal', 'Google Calendar', 'ph-calendar-blank') + conn('strava', 'Strava', 'ph-watch')) +
+    sec('Profiles', profs) +
+    '<button class="btn btn-out" style="margin-top:14px" ' + h(function () { save(); set({ scr: 'intro', introStep: INTRO.length - 1, sheet: null }); }) + '>' + icon('ph-sign-out', 18) + 'Log out</button>' +
+    '<button class="muted" style="min-height:44px;font-size:13px;text-decoration:underline;text-underline-offset:3px" ' + h(function () { var keepId = P.cur; S = fresh(); save(); render(); scheduleSplash(); }) + '>Start this profile over</button>' +
+    '<div class="muted" style="text-align:center;font-size:12px">Most Days prototype. Icons by Phosphor. Photos from Unsplash.</div></div></div>';
+}
+function whyView() {
+  var motive = (MOTIVE.filter(function (a) { return a[0] === S.motive; })[0] || [0, '', 'ph-heart']);
+  var notes = (S.inspo || []).map(function (n) { return '<div class="lrow">' + icon(n.k === 'link' ? 'ph-link' : 'ph-note', 22) + '<span style="flex:1">' + esc(n.t) + '</span></div>'; }).join('');
+  var log = (S.journalLog || []).map(function (j) { return '<div class="lrow" style="align-items:flex-start">' + icon(sp(W[j.k].sport).icon, 20, sp(W[j.k].sport).col) + '<span style="flex:1"><span class="muted" style="display:block;font-size:13px">' + j.d + ', ' + wname(j.k) + '</span><span class="serif" style="font-style:italic;font-size:18px">' + esc(j.t) + '</span></span></div>'; }).join('');
+  return '<div class="screen up" style="background:var(--paper)"><div class="photo" style="height:calc(330px + var(--top))"><img src="' + PH.laces + '" alt=""><div class="scrim"></div>' +
+    '<button class="icon-btn" aria-label="Back" style="position:absolute;top:calc(var(--top) + 14px);left:16px;background:rgba(255,255,255,.92)" ' + h(function () { set({ scr: S.from === 'you' ? 'you' : 'today' }); }) + '>' + BACK + '</button>' +
+    '<div style="position:absolute;left:20px;right:20px;bottom:20px;color:#fff"><div class="kicker" style="color:rgba(255,255,255,.85)">Your why</div><div class="serif" style="font-style:italic;font-size:30px;line-height:1.2;margin-top:6px">' + (S.why.trim() ? '“' + esc(S.why.trim()) + '”' : 'You haven’t written it yet.') + '</div></div></div>' +
+    '<div class="scroll" style="flex:1;padding:16px 16px calc(24px + var(--bottom));display:flex;flex-direction:column;gap:8px">' +
+    '<button class="btn btn-out" ' + h(function () { set({ sheet: 'why' }); }) + '>' + icon('ph-pencil-simple-line', 18) + (S.why.trim() ? 'Rewrite it' : 'Write it') + '</button>' +
+    (S.motive ? '<div class="sec">What moves you</div><section class="card" style="padding:2px 16px;border-radius:20px"><div class="lrow">' + icon(motive[2], 22) + '<span style="flex:1">' + motive[1] + '</span></div>' + (S.hasRace === 'yes' ? '<div class="lrow">' + icon('ph-flag-checkered', 22) + '<span style="flex:1">' + esc(S.raceName) + '</span></div>' : '') + '</section>' : '') +
+    '<div class="sec">Things that keep you going</div><section class="card" style="padding:2px 16px;border-radius:20px">' + (notes || '<div class="lrow muted">' + icon('ph-sparkle', 22) + 'A line from a book, a reel, a song. Keep them here.</div>') + '</section>' +
+    '<div class="row"><button class="pill" style="justify-content:center;min-height:46px;border:1.5px dashed #CDCAC2;background:transparent" ' + h(function () { set({ sheet: 'note', noteKind: 'note' }); }) + '>' + icon('ph-note', 16) + 'Write a note</button><button class="pill" style="justify-content:center;min-height:46px;border:1.5px dashed #CDCAC2;background:transparent" ' + h(function () { set({ sheet: 'note', noteKind: 'link' }); }) + '>' + icon('ph-link', 16) + 'Paste a link</button></div>' +
+    '<div class="sec">Lines from your sessions</div><section class="card" style="padding:2px 16px;border-radius:20px">' + (log || '<div class="lrow muted">' + icon('ph-pen', 22) + 'After each session you can leave one line. They collect here.</div>') + '</section></div></div>';
+}
+function appShell() {
+  var body = S.scr === 'today' ? todayView() : S.scr === 'calendar' ? calendarView() : S.scr === 'plan' ? planView() : youView();
+  return '<div class="screen fade"><div class="scroll" style="flex:1;padding-bottom:calc(70px + var(--bottom))">' + body + '</div><nav class="nav" aria-label="Main" style="grid-template-columns:repeat(4,1fr);padding:4px 12px var(--bottom)">' +
+    [['today', 'Home', 'ph-house'], ['calendar', 'Calendar', 'ph-calendar-blank'], ['plan', 'Plan', 'ph-flag-checkered'], ['you', 'You', 'ph-user-circle']].map(function (x) {
+      var on = S.scr === x[0];
+      return '<button class="' + (on ? 'on' : '') + '" ' + (on ? 'aria-current="page" ' : '') + h(function () { set({ scr: x[0] }); }) + '>' + icon(x[2], 22) + x[1] + '</button>';
+    }).join('') + '</nav></div>';
+}
+
+/* ---------- workout, done, share ---------- */
+function workout() {
+  var x = sess(S.active), k = x.key, w = W[k], s = sp(w.sport);
+  var rows = w.blocks.map(function (b) {
+    return '<div style="display:flex;align-items:center;gap:10px"><span style="width:10px;height:30px;flex:none;border-radius:4px;background:' + s.col + ';opacity:' + op(b[2]) + '"></span><span style="flex:1"><span style="font-weight:600">' + b[0] + '</span><span class="muted" style="display:block;font-size:14px">' + b[1] + '</span></span><span class="muted" style="font-size:14px">' + b[3] + ' min</span></div>';
+  }).join('');
+  var stat = function (l, v) { return '<div class="card" style="border-radius:16px;padding:10px 12px"><div class="muted" style="font-size:12px">' + l + '</div><div style="font-family:var(--serif);font-weight:500;font-size:20px">' + v + '</div></div>'; };
+  var firstTime = S.phase === 'day1' && !S.firstDone;
+  return '<div class="screen up" style="background:var(--paper)"><div class="photo" style="height:calc(300px + var(--top))"><img src="' + w.photo + '" alt=""><div class="scrim"></div>' +
+    '<button class="icon-btn" aria-label="Back" style="position:absolute;top:calc(var(--top) + 14px);left:16px;background:rgba(255,255,255,.92)" ' + h(function () { set({ scr: S.from || 'today' }); }) + '>' + BACK + '</button>' +
+    '<div style="position:absolute;left:20px;right:20px;bottom:18px;color:#fff"><div class="kicker" style="color:rgba(255,255,255,.85);display:flex;align-items:center;gap:6px">' + icon(s.icon, 16, '#fff') + (x.day === TODAY_IDX ? 'Today' : DAYS[x.day]) + '</div><div class="disp" style="font-size:40px">' + w.a + '</div><div class="disp-i" style="font-size:34px">' + w.b + '.</div></div></div>' +
+    '<div class="scroll" style="flex:1;padding:16px 18px 12px;display:flex;flex-direction:column;gap:14px">' +
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">' + stat('Time', mins(k) + '<span style="font-size:14px;font-weight:500"> min</span>') + stat('Distance', w.dist) + stat('Effort', EFF[peak(k)]) + '</div>' +
+    '<section class="card" style="border-radius:20px;padding:16px">' + bars(k, 70) + '<div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">' + rows + '</div></section>' +
+    (firstTime ? '<div class="card" style="border-radius:18px;padding:14px 16px;border-left:4px solid var(--green);font-size:15px"><b>First session.</b> Keep it easy enough that you’d happily do it again tomorrow. That’s the whole goal this week.</div>' : w.tip ? '<div class="card" style="border-radius:18px;padding:14px 16px;border-left:4px solid var(--green);font-size:15px"><b>Coach’s note.</b> ' + w.tip + '</div>' : '') +
+    (k !== x.base ? '<div class="muted" style="display:flex;align-items:center;gap:8px;font-size:14px"><span style="flex:1">Changed from ' + wname(x.base) + '.</span><button style="min-height:40px;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:3px" ' + h(undo) + '>Undo</button></div>' : '') +
+    (w.music ? '<a href="https://music.youtube.com/search?q=' + encodeURIComponent(w.b + ' running playlist') + '" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;background:var(--ink);border-radius:18px;padding:12px 14px;text-decoration:none;color:#fff"><span style="width:40px;height:40px;border-radius:10px;background:var(--green);display:flex;align-items:center;justify-content:center;flex:none">' + icon('ph-play', 18, '#111') + '</span><span style="flex:1"><span style="display:block;font-weight:600">Music for this one</span><span style="display:block;font-size:14px;color:#BDBCB6">Opens in YouTube Music</span></span></a>' : '') +
+    '</div>' + (!S.done[S.active] ? '<div class="row" style="padding:8px 18px calc(22px + var(--bottom))"><button class="btn btn-ink" ' + h(didIt) + '>I did it</button><button class="btn btn-out" ' + h(function () { set({ sheet: 'change', reason: null, opt: null }); }) + '>Change it</button></div>' : '') + '</div>';
+}
+function doneScreen() {
+  var x = sess(S.active), w = W[x.key], isSwim = w.sport === 'swim', firstEver = S.phase === 'day1' && !S.firstDone;
+  var note = w.stat + '. ' + (x.key !== x.base ? 'Plan B, and it still counts.' : firstEver ? 'The hardest one is the first. It’s done.' : isSwim ? 'Lengths add up.' : 'Still counts, whatever the watch says.');
+  return '<div class="screen fade" style="background:#0B0B0B"><div class="photo" style="position:absolute;inset:0"><img src="' + (isSwim ? PH.swim2 : PH.night) + '" alt=""><div class="scrim" style="background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,.3) 30%,rgba(0,0,0,.95) 70%)"></div>' +
+    '<div class="in" style="padding:calc(var(--top) + 24px) 24px calc(28px + var(--bottom))">' + logo(20, '#fff') +
+    '<div class="disp" style="margin-top:auto;font-size:' + (firstEver ? 60 : 76) + 'px;letter-spacing:-2.4px;line-height:.9;animation:line .8s both">' + (firstEver ? 'First one.' : 'Done.') + '</div><div class="disp-i" style="font-size:34px;animation:line .8s .3s both">' + (firstEver ? 'Most days start here.' : 'Most days.') + '</div>' +
+    '<p style="margin:10px 0 0;color:rgba(255,255,255,.88)">' + note + '</p>' +
+    '<label style="margin-top:18px;font-size:13px;color:rgba(255,255,255,.8)">One line, just for you<input data-in="journal" value="' + esc(S.journal) + '" placeholder="' + (isSwim ? 'Finally got the breathing.' : 'Heavy legs, then it clicked.') + '" style="display:block;width:100%;margin-top:6px;height:52px;border-radius:16px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;padding:0 16px"></label>' +
+    '<div class="row" style="margin-top:14px"><button class="btn btn-green" ' + h(function () { logJournal(); set({ scr: 'today', firstDone: true }); if (firstEver) toastMsg('Day one, done. See you ' + nextDayName() + '.'); }) + '>Keep it</button><button class="btn btn-ghost" ' + h(function () { logJournal(); set({ scr: 'share', firstDone: true }); }) + '>Share</button></div></div></div></div>';
+}
+function logJournal() {
+  var t = (S.journal || '').trim();
+  if (!t) return;
+  var x = sess(S.active);
+  S.journalLog = [{ d: x.day === TODAY_IDX ? todayDate().toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }) : DAYS[x.day], k: x.key, t: t }].concat(S.journalLog || []);
+  S.journal = '';
+}
+function nextDayName() { var n = S.sessions.find(function (y, i) { return y.day > TODAY_IDX && !S.done[i]; }); return n ? ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][n.day] : 'next week'; }
+function share() {
+  var x = sess(S.active), w = W[x.key];
+  var big = w.stat.split(' in ')[0];
+  var SS = [
+    ['Moment', w.sport === 'swim' ? PH.swim2 : PH.legs, big, S.phase === 'day1' ? 'day one.' : 'before work.', 'Wed 14 Oct, Bengaluru'],
+    ['Countdown', PH.group, S.hasRace === 'yes' ? S.raceName.replace(' Marathon', '') : 'Week one', S.hasRace === 'yes' ? 'here I come.' : 'started.', esc(first())],
+    ['Plain', PH.night, 'Not every day.', 'Most days.', '']
+  ];
+  var st = SS[S.shareStyle], text = st[2] + ' ' + st[3];
+  return '<div class="screen up" style="padding:calc(var(--top) + 14px) 20px calc(24px + var(--bottom))">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between"><button class="icon-btn" aria-label="Close" ' + h(function () { set({ scr: 'today' }); }) + '>' + CLOSE + '</button><span style="font-weight:600">Share</span><span style="width:44px"></span></div>' +
+    '<div class="photo" style="margin:14px auto 0;width:min(270px,66vw);aspect-ratio:9/16;border-radius:20px"><img src="' + st[1] + '" alt=""><div class="scrim" style="background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.88))"></div>' +
+    '<div style="position:absolute;left:20px;right:20px;bottom:54px;color:#fff"><div class="disp" style="font-size:32px">' + esc(st[2]) + '</div><div class="disp-i" style="font-size:28px">' + st[3] + '</div><div class="kicker" style="margin-top:8px;font-size:11px;color:rgba(255,255,255,.85)">' + st[4] + '</div></div>' +
+    '<div style="position:absolute;left:20px;bottom:18px;color:#fff">' + logo(14) + '</div></div>' +
+    '<div role="radiogroup" style="margin-top:14px;display:flex;gap:6px;justify-content:center">' + SS.map(function (s2, i) {
+      var on = S.shareStyle === i;
+      return '<button role="radio" aria-checked="' + on + '" class="pill' + (on ? ' on' : '') + '" ' + h(function () { set({ shareStyle: i }); }) + '>' + s2[0] + '</button>';
+    }).join('') + '</div><div style="margin-top:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding-top:14px">' +
+    '<button class="btn btn-out" style="border-radius:16px;font-size:14px" ' + h(function () { if (navigator.share) navigator.share({ title: 'Most Days', text: text }).catch(function () {}); else toastMsg('Sharing works from your phone.'); }) + '>' + icon('ph-export', 18) + 'Share</button>' +
+    '<a class="btn btn-out" style="border-radius:16px;font-size:14px" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(text) + '">' + icon('ph-whatsapp-logo', 18) + 'WhatsApp</a>' +
+    '<button class="btn btn-ink" style="border-radius:16px;font-size:14px" ' + h(function () { set({ scr: 'today' }); }) + '>Keep it</button></div></div>';
+}
+
+/* ---------- sheets ---------- */
+function didIt() {
+  set({ sheet: 'checking', offVal: null });
+  clearTimeout(tSync);
+  var isSwim = W[sess(S.active).key].sport === 'swim';
+  tSync = setTimeout(function () {
+    var nx = !S.conn.strava ? 'manual' : SCEN === 'two' && !isSwim ? 'two' : SCEN === 'off' ? 'off' : SCEN === 'nothing' ? 'nothing' : isSwim && S.phase === 'day7' ? 'off' : 'found';
+    set({ sheet: nx });
+  }, 1400);
+}
+function snapshot() { return JSON.parse(JSON.stringify({ sessions: S.sessions, done: S.done })); }
+function undo() { clearTimeout(tToast); if (!S.prev) return; set({ sessions: S.prev.sessions, done: S.prev.done, prev: null, toast: '' }); }
+function optionsFor(i) {
+  var x = sess(i), base = x.base, bw = W[base], prim = bw.sport;
+  var others = keys(S.others).concat(S.primary ? [S.primary] : []).filter(function (k, j, a) { return k !== prim && a.indexOf(k) === j; });
+  var swap = others.slice(0, 2).map(function (k) { return k === 'str' ? 'core' : k === 'swim' ? 'swimLesson' : EASY_OF[k]; }).filter(function (k) { return k && k !== base; });
+  var same = { tempo: ['shortTempo', 'progression'], easyRun: ['tiny', 'runWalk'], longRun: ['easyRun', 'easy'], swim: ['swimShort', 'drills'], swimLesson: ['drills'], strength: ['core'], easy: ['tiny'] }[base] || [];
+  var easier = { tempo: ['easy', 'strides'], longRun: ['runWalk'] }[base] || [];
+  var g = [];
+  if (same.length) g.push([prim === 'run' && base === 'tempo' ? 'Still a tempo, lighter' : 'Shorter or lighter', same]);
+  if (easier.length) g.push(['Easier', easier]);
+  if (swap.length) g.push(['Something else', swap]);
+  return g;
+}
+function recFor(i) {
+  var g = optionsFor(i), all = [].concat.apply([], g.map(function (x) { return x[1]; }));
+  if (!S.reason || !all.length) return null;
+  var base = sess(i).base;
+  var m = {
+    tempo: { early: 'easy', time: 'shortTempo', tired: 'swimLesson', meh: 'progression' },
+    swim: { early: 'swimShort', time: 'swimShort', tired: 'drills', meh: 'drills' }
+  }[base];
+  var r = m && m[S.reason];
+  if (r && all.indexOf(r) > -1) return r;
+  if (r === 'swimLesson' && all.indexOf('core') > -1) return 'core';
+  return S.reason === 'tired' && g[g.length - 1] ? g[g.length - 1][1][0] : all[0];
+}
+function sheet() {
+  if (!S.sheet) return '';
+  var sh = S.sheet, body = '', title = '';
+  var green = function (label, fn, extra) { return '<button class="btn btn-ink" ' + (extra || '') + ' ' + h(fn) + '>' + label + '</button>'; };
+  var x = S.sessions && sess(S.active), w = x && W[x.key], isSwim = w && w.sport === 'swim';
+  var toFeel = function () { set({ sheet: 'feel' }); };
+  if (sh === 'note') {
+    var isLink = S.noteKind === 'link';
+    title = isLink ? 'Paste a link' : 'Write a note';
+    body = '<p class="muted" style="margin:0">' + (isLink ? 'A reel, a video, a guided run. Anything that gets you out the door.' : 'A line from a book, something someone said, anything.') + '</p>' +
+      '<input class="field" data-in="noteDraft" placeholder="' + (isLink ? 'https://' : 'Slow is still running.') + '" value="">' +
+      green('Save', function () { var t = (S.noteDraft || '').trim(); if (t) S.inspo = (S.inspo || []).concat([{ k: S.noteKind, t: t }]); set({ sheet: null, noteDraft: '' }); });
+  }
+  if (sh === 'why') {
+    title = 'Why are you doing this?';
+    body = '<p class="muted" style="margin:0">One line. It shows up on the mornings you need it.</p><textarea data-in="why" placeholder="Feel like myself again by the end of the year." style="min-height:120px;border-radius:18px;border:1.5px solid var(--line);background:#fff;padding:16px;font-family:var(--serif);font-style:italic;font-weight:400;font-size:22px;resize:none">' + esc(S.why) + '</textarea>' + green('Save', function () { set({ sheet: null }); });
+  }
+  if (sh === 'connect') {
+    title = 'Connect your watch';
+    body = '<p class="muted" style="margin:0">Most Days reads sessions from Strava, which works with Garmin, COROS, Apple Watch and more.</p>' + green(icon('ph-watch', 20, '#fff') + 'Connect Strava', function () { set({ sheet: 'connecting' }); setTimeout(function () { var o = Object.assign({}, S.conn); o.strava = 1; Object.assign(S, { conn: o, sheet: null }); toastMsg('Strava connected. New sessions will come in on their own.'); }, 1200); });
+  }
+  if (sh === 'connecting') { title = 'Connecting to Strava'; body = '<div class="card" style="display:flex;align-items:center;gap:12px;border-radius:18px;padding:18px"><span class="spinner"></span>Waiting for Strava</div>'; }
+  if (sh === 'checking') { title = 'Checking your watch'; body = '<div class="card" style="display:flex;align-items:center;gap:12px;border-radius:18px;padding:18px"><span class="spinner"></span>' + (S.conn.strava ? 'Looking in Strava' : 'No watch connected yet') + '</div>'; }
+  if (sh === 'found') {
+    title = 'Is this the one?';
+    body = '<div class="card" style="border-radius:18px;padding:16px 18px"><div class="muted" style="font-size:13px">' + (isSwim ? '7:04 am' : '6:21 am') + ', from your watch</div><div style="font-family:var(--serif);font-weight:500;font-size:22px">' + w.stat + '</div></div>' +
+      '<div class="row">' + green('That’s it', toFeel) + '<button class="btn btn-out" ' + h(function () { set({ sheet: 'manual' }); }) + '>Not this one</button></div>';
+  }
+  if (sh === 'two') {
+    title = 'Two runs came in. Which one?';
+    body = [['6:21 am', '5.2 km, 31 min'], ['6:58 am', '0.9 km, 11 min']].map(function (r) { return '<button class="card" style="text-align:left;border-radius:18px;padding:14px 18px" ' + h(toFeel) + '><span class="muted" style="display:block;font-size:13px">' + r[0] + '</span><span style="font-weight:600">' + r[1] + '</span></button>'; }).join('') +
+      '<button style="height:46px;font-weight:600;text-decoration:underline;text-underline-offset:3px" ' + h(toFeel) + '>Both. The watch paused mid-run</button>';
+  }
+  if (sh === 'off') {
+    var def = isSwim ? 40 : 6.4, v = S.offVal == null ? def : S.offVal, shown = isSwim ? v : v.toFixed(1);
+    title = isSwim ? 'Lengths are easy to miss' : 'These numbers look off';
+    body = '<div class="card" style="border-radius:18px;padding:16px 18px"><div style="font-size:15px">' + (isSwim ? 'Your watch counted 34 lengths (850 m) in a 25 m pool. How many did you actually swim?' : 'The watch says 2.1 km in 40 min. Treadmills confuse it. What did the machine say?') + '</div>' +
+      '<div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between"><button class="icon-btn" style="border:1.5px solid var(--line);font-size:22px" aria-label="Less" ' + h(function () { set({ offVal: Math.max(0, +(v - (isSwim ? 1 : 0.1)).toFixed(1)) }); }) + '>−</button>' +
+      '<div style="text-align:center"><div style="font-family:var(--serif);font-weight:500;font-size:34px;line-height:1">' + shown + '</div><div class="muted" style="font-size:13px">' + (isSwim ? 'lengths, ' + (v * 25).toLocaleString('en-IN') + ' m' : 'km') + '</div></div>' +
+      '<button class="icon-btn" style="border:1.5px solid var(--line);font-size:22px" aria-label="More" ' + h(function () { set({ offVal: +(v + (isSwim ? 1 : 0.1)).toFixed(1) }); }) + '>+</button></div></div>' +
+      green(isSwim ? 'Use ' + (v * 25).toLocaleString('en-IN') + ' m' : 'Use ' + shown + ' km', toFeel);
+  }
+  if (sh === 'manual' || sh === 'nothing') {
+    title = sh === 'nothing' ? 'Nothing from Strava yet' : !S.conn.strava ? 'Roughly what did you do?' : 'Roughly what did you do?';
+    body = (!S.conn.strava ? '<p class="muted" style="margin:0">No watch connected, so tell me roughly. Close enough is fine.</p>' : '') +
+      '<div class="row"><label class="muted" style="font-size:13px">Minutes<input class="field" style="font-size:18px;height:50px" type="number" inputmode="numeric" value="' + mins(x.key) + '"></label><label class="muted" style="font-size:13px">' + (isSwim ? 'Metres' : 'Km') + ', if you know<input class="field" style="font-size:18px;height:50px" type="number" inputmode="decimal" placeholder="Optional"></label></div>' +
+      green('Save', toFeel) + (sh === 'nothing' ? '<button style="height:44px;font-weight:600" ' + h(function () { set({ sheet: null }); }) + '>Wait. Check again at 9 am</button>' : '');
+  }
+  if (sh === 'feel') {
+    title = 'How did it feel?';
+    body = '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">' + ['Easy', 'Steady', 'Hard', 'Very hard', 'All out'].map(function (l, i) {
+      return '<button class="card" style="min-height:72px;border-radius:16px;font-size:13px;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;padding:8px 2px;line-height:1.1" ' + h(function () {
+        var d = Object.assign({}, S.done); d[S.active] = true; var f = Object.assign({}, S.feel); f[S.active] = l.toLowerCase();
+        set({ done: d, feel: f, sheet: null, scr: 'done' });
+      }) + '><span style="width:8px;border-radius:4px;background:' + sp(w.sport).col + ';height:' + (8 + i * 6) + 'px"></span>' + l + '</button>';
+    }).join('') + '</div>';
+  }
+  if (sh === 'change') {
+    title = 'Swap it for something that fits';
+    var groups = optionsFor(S.active), rec = recFor(S.active), picked = S.opt || rec;
+    body = '<div class="scroll" style="display:flex;gap:6px;overflow-x:auto;flex:none;margin:0 -18px;padding:0 18px">' + [['early', 'Early start tomorrow', 'ph-alarm'], ['time', 'Short on time', 'ph-timer'], ['tired', 'Tired or sore', 'ph-battery-low'], ['meh', 'Not feeling it', 'ph-cloud']].map(function (r) {
+      var on = S.reason === r[0];
+      return '<button class="pill' + (on ? ' on' : '') + '" aria-pressed="' + on + '" ' + h(function () { set({ reason: r[0], opt: null }); }) + '>' + icon(r[2], 16) + r[1] + '</button>';
+    }).join('') + '</div>' +
+      (S.reason === 'early' && S.conn.cal ? '<div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--cal);flex:none">' + icon('ph-calendar-blank', 16) + (S.phase === 'day7' ? 'From your calendar: Amma’s check-up, tomorrow 8 am' : 'From your calendar: a 7:30 am meeting tomorrow') + '</div>' : '') +
+      '<div class="scroll" style="display:flex;flex-direction:column;gap:12px;min-height:0">' + groups.map(function (g) {
+        return '<div><div class="kicker muted" style="font-size:12px;margin-bottom:6px">' + g[0] + '</div><div style="display:flex;flex-direction:column;gap:6px">' + g[1].map(function (ok) {
+          var on = picked === ok, ow = W[ok];
+          return '<button class="opt' + (on ? ' on' : '') + '" style="padding:12px 14px" aria-pressed="' + on + '" ' + h(function () { set({ opt: ok }); }) + '><span style="width:64px;flex:none">' + bars(ok, 30) + '</span>' +
+            '<span style="flex:1"><span style="display:block;font-weight:600">' + wname(ok) + '</span><span class="muted" style="display:block;font-size:13px">' + mins(ok) + ' min, ' + EFF[peak(ok)].toLowerCase() + (ow.sport !== W[sess(S.active).base].sport ? ', ' + sp(ow.sport).short.toLowerCase() : '') + '</span></span>' +
+            (rec === ok ? '<span class="tag g" style="font-size:11px">Suggested</span>' : '') + '</button>';
+        }).join('') + '</div></div>';
+      }).join('') + '</div>' +
+      '<button class="btn btn-ink" style="flex:none" ' + (picked ? '' : 'disabled ') + h(function () {
+        if (!picked) return;
+        var snap = snapshot(), list = JSON.parse(JSON.stringify(S.sessions)); list[S.active].key = picked;
+        Object.assign(S, { prev: snap, sessions: list, sheet: null, reason: null, opt: null, scr: 'workout' });
+        toastMsg('Changed to ' + wname(picked) + '.');
+      }) + '>' + (picked ? 'Use ' + wname(picked) : 'Pick one') + '</button>';
+  }
+  if (sh === 'cant') {
+    title = 'That’s okay. What would help?';
+    var free = [0, 1, 2, 3, 4, 5, 6].filter(function (d) { return d > TODAY_IDX && !S.sessions.some(function (y) { return y.day === d; }); }).slice(0, 2);
+    var moveOpts = free.map(function (d) { return [d, DAYS[d], 'Free']; });
+    var nxt = S.sessions.find(function (y) { return y.day > TODAY_IDX; });
+    if (nxt && moveOpts.length < 3) moveOpts.push([nxt.day, DAYS[nxt.day], 'Swap days']);
+    moveOpts.sort(function (a, b) { return a[0] - b[0]; });
+    moveOpts = moveOpts.map(function (m) { var ev = calEventsOn(ymd(addD(weekMon(), m[0])))[0]; return ev ? [m[0], m[1], ev[1].split(' ').pop().replace(/^./, function (c) { return c.toUpperCase(); }), true] : m; });
+    body = [['move', 'Move it', 'Pick another day this week', 'ph-arrow-bend-up-right'], ['short', 'Do a tiny one', '15 minutes, easy', 'ph-timer'], ['skip', 'Skip it', 'Rest is part of it', 'ph-moon']].map(function (o) {
+      var on = S.cant === o[0];
+      return '<button class="opt' + (on ? ' on' : '') + '" aria-pressed="' + on + '" ' + h(function () { set({ cant: o[0], moveDay: null }); }) + '>' + icon(o[3], 24) + '<span style="flex:1"><span style="display:block;font-weight:600;font-size:17px">' + o[1] + '</span><span class="muted" style="display:block;font-size:14px">' + o[2] + '</span></span><span class="check"></span></button>';
+    }).join('');
+    if (S.cant === 'move') body += '<div class="row">' + moveOpts.map(function (m) {
+      var on = S.moveDay === m[0], dis = !!m[3];
+      return '<button ' + (dis ? 'disabled ' : '') + 'aria-pressed="' + on + '" style="min-height:58px;border-radius:16px;' + (dis ? 'color:#9A9890;border:1.5px dashed #CDCAC2;cursor:default' : on ? 'background:var(--ink);color:#fff' : 'background:#fff') + '" ' + (dis ? '' : h(function () { set({ moveDay: m[0] }); })) + '><span style="display:block;font-weight:600">' + m[1] + '</span><span style="display:block;font-size:12px">' + m[2] + '</span></button>';
+    }).join('') + '</div>';
+    var ready = S.cant === 'short' || S.cant === 'skip' || (S.cant === 'move' && S.moveDay != null);
+    if (ready) body += green(S.cant === 'move' ? 'Move it' : S.cant === 'short' ? 'Use the 15 min version' : 'Skip today', function () {
+      var snap = snapshot(), list = JSON.parse(JSON.stringify(S.sessions)), cur = list[S.active];
+      if (S.cant === 'move') {
+        var tgt = S.moveDay, other = list.find(function (y) { return y.day === tgt; });
+        var moved = { day: tgt, key: cur.key, base: cur.base };
+        if (other) { other.day = cur.day; list.push({ day: cur.day, key: cur.key, base: cur.base, rest: 'moved', movedTo: tgt }); list.splice(list.indexOf(cur), 1); list.push(moved); }
+        else { cur.rest = 'moved'; cur.movedTo = tgt; list.push(moved); }
+        list.sort(function (a, b) { return a.day - b.day || (a.rest ? -1 : 1); });
+        Object.assign(S, { prev: snap, sessions: list, sheet: 'moved', cant: null, moveDay: null, movedName: DAYS[tgt] });
+        render();
+      } else if (S.cant === 'short') {
+        cur.key = W[cur.base].sport === 'run' ? 'tiny' : W[cur.base].sport === 'swim' ? 'drills' : 'core';
+        Object.assign(S, { prev: snap, sessions: list, sheet: null, cant: null }); toastMsg('Changed to a shorter one.');
+      } else { cur.rest = 'skipped'; Object.assign(S, { prev: snap, sessions: list, sheet: null, cant: null }); toastMsg('Skipped. Nothing else changes.'); }
+    });
+  }
+  if (sh === 'moved') {
+    title = 'Moved to ' + (S.movedName || 'later');
+    body = '<div style="font-size:16px;color:#3A3A36">Today is rest. The rest of the week shifts around it.</div>' +
+      '<a class="btn btn-out" target="_blank" rel="noopener" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(wname(sess(todayIndex()).base) + ' (Most Days)') + '&dates=20261016T004500Z/20261016T012000Z">' + icon('ph-calendar-plus', 18) + 'Add to Google Calendar</a>' +
+      green('Done', function () { set({ sheet: null }); });
+  }
+  return '<button class="sheet-bg" aria-label="Close" ' + h(function () { clearTimeout(tSync); set({ sheet: null }); }) + '></button><div class="sheet" role="dialog" aria-label="' + esc(title) + '"><div class="grab"></div><h2>' + title + '</h2>' + body + '</div>';
+}
+
+/* ---------- render ---------- */
+var app = document.getElementById('app');
+function render() {
+  H = [];
+  var scr = S.scr, html;
+  if (scr === 'splash') html = splash();
+  else if (scr === 'intro') html = intro();
+  else if (scr === 'onb') html = onb();
+  else if (scr === 'build') html = build();
+  else if (scr === 'workout') html = workout();
+  else if (scr === 'done') html = doneScreen();
+  else if (scr === 'share') html = share();
+  else if (scr === 'why') html = whyView();
+  else html = appShell();
+  html += sheet();
+  var inApp = ['today', 'calendar', 'plan', 'you', 'workout', 'why'].indexOf(scr) > -1;
+  if (S.toast && inApp) html += '<div class="toast" role="status"><span style="flex:1;font-size:15px">' + esc(S.toast) + '</span>' + (S.prev ? '<button ' + h(undo) + '>Undo</button>' : '') + '</div>';
+  app.innerHTML = html;
+  if (scr === 'intro') scheduleIntro();
+  save();
+}
+app.addEventListener('click', function (e) {
+  var el = e.target.closest('[data-h]');
+  if (!el || el.disabled) return;
+  var fn = H[+el.getAttribute('data-h')];
+  if (fn) fn();
+});
+app.addEventListener('input', function (e) {
+  var k = e.target.getAttribute('data-in');
+  if (!k) return;
+  S[k] = e.target.value; save();
+  if (S.scr === 'onb') {
+    var nb = app.querySelector('[data-next]');
+    var id = STEPS[S.step].id;
+    if (nb) { nb.disabled = !valid(id); if (id === 'why') nb.textContent = S.why.trim() ? 'Continue' : 'Skip'; }
+    var strip = app.querySelector('.strip'); if (strip && id === 'name') strip.innerHTML = '';
+  }
+});
+app.addEventListener('change', function (e) { if (e.target.getAttribute('data-in') === 'raceDate' && S.scr === 'onb') render(); });
+function scheduleSplash() { if (S.scr === 'splash') setTimeout(function () { if (S.scr === 'splash') set({ scr: 'intro', introStep: 0 }); }, 2200); }
+
+// Demo links for presenting: ?demo=day1|day7&screen=today|week|plan|workout|change|cant|done|share|swimsync|onb
+(function () {
+  var d = params.get('demo'), scr = params.get('screen');
+  if (!d && !scr) return;
+  if (d === 'day1' || d === 'day7' || scr) {
+    demoAccount();
+    if (d === 'day1') { S.phase = 'day1'; S.sessions = buildWeek(); S.done = {}; S.hintSeen = false; S.firstDone = false; S.why = ''; S.conn = { cal: 1 }; }
+  }
+  var ti = todayIndex();
+  var map = {
+    today: { scr: 'today' }, plan: { scr: 'plan' }, week: { scr: 'calendar' }, calendar: { scr: 'calendar' }, you: { scr: 'you' }, why: { scr: 'why' }, workout: { scr: 'workout', active: ti },
+    change: { scr: 'workout', active: ti, sheet: 'change', reason: 'early' },
+    cant: { scr: 'today', active: ti, sheet: 'cant', cant: 'move' },
+    done: { scr: 'done', active: ti }, share: { scr: 'share', active: ti },
+    swimsync: { scr: 'workout', active: S.sessions.findIndex(function (x) { return W[x.key].sport === 'swim'; }), sheet: 'off' },
+    onb: { scr: 'onb', step: +(params.get('step') || 0) }
+  };
+  if (scr === 'onb') { var keep = S; S = fresh(); if (params.get('step')) { S.name = 'Anmol'; } S.scr = 'onb'; S.step = +(params.get('step') || 0); }
+  else if (map[scr]) Object.assign(S, map[scr]);
+})();
+render();
+scheduleSplash();
+</script>
+</body>
+</html>
