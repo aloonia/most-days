@@ -1,5 +1,7 @@
 # Most Days, web app prototype
 
+Live at https://most-days-app.vercel.app · Code at https://github.com/aloonia/most-days
+
 A single-page web app of the phase-one flows: the happy path, Change it, Can't today, and the swim journey with honest watch sync. It installs on an iPhone home screen with its own icon and opens full screen.
 
 ## What's in the folder
